@@ -1,4 +1,4 @@
-# Archetype: Experss Serverless Rest API
+# Archetype: Express Serverless Rest API
 
 The Archetype for an Express Serverless Rest API
 
