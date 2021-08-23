@@ -1,0 +1,14 @@
+
+---
+script:
+  - if:
+      conditions:
+        - switch-enabled: overwrite
+      then:
+        - rules:
+            - destination:
+                overwrite: true
+
+  - render:
+      directory:
+        source: "github-actions"
