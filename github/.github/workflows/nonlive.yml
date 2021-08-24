@@ -1,7 +1,5 @@
 name: "Nonlive Deploy"
 
-# One off commit #2
-
 on:
   workflow_dispatch:
   push:
