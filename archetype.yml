@@ -26,9 +26,16 @@ script:
         prompt: "Entities?"
         type: list
 
-  - render:
-      directory:
-        source: "github"
+  - if:
+      conditions:
+        - switch-enabled: overwrite
+      then:
+        - rules:
+            - destination:
+                overwrite: true
+        - render:
+            directory:
+              source: "github"
 
   - render:
       directory:
