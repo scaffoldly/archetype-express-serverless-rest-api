@@ -16,6 +16,7 @@ jobs:
           source: "."
           destination: "${{ runner.temp }}/rendered"
           options: "-a application-name='Example Service' -a repository-name=example-api -a service-name=example -a auth-service=y -a persistence=dynamodb -a entities=foo,bar"
+          commit: "false"
       - run: yarn
         working-directory: "${{ runner.temp }}/rendered"
         # TODO Other checks
