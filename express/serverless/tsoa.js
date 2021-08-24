@@ -13,20 +13,20 @@ const envVars = NODE_ENV
   await generateSpec({
     basePath: `/${envVars.SERVICE_NAME}`,
     name: envVars.APPLICATION_NAME,
-    version: packageJson.version,
-    description: `To generate a JWT token, go to the <a href="https://${envVars.SERVERLESS_API_DOMAIN}/auth/jwt.html" target="_blank">JWT Token Generator</a>`,
+    version: packageJson.version,{% if auth-service == true %}
+    description: `To generate a JWT token, go to the <a href="https://${envVars.SERVERLESS_API_DOMAIN}/auth/jwt.html" target="_blank">JWT Token Generator</a>`,{% endif %}
     entryFile: 'src/app.ts',
     noImplicitAdditionalProperties: 'throw-on-extras',
     controllerPathGlobs: ['src/**/*Controller*.ts'],
     outputDirectory: 'src',
-    specVersion: 3,
+    specVersion: 3,{% if auth-service == true %}
     securityDefinitions: {
       jwt: {
         type: 'http',
         scheme: 'bearer',
         bearerFormat: 'JWT',
       },
-    },
+    },{% endif %}
   });
 
   console.log('Generating routes...');
@@ -34,8 +34,8 @@ const envVars = NODE_ENV
     entryFile: 'src/app.ts',
     noImplicitAdditionalProperties: 'throw-on-extras',
     controllerPathGlobs: ['src/**/*Controller*.ts'],
-    routesDir: 'src',
-    //authenticationModule: 'src/auth.ts',
+    routesDir: 'src',{% if auth-service == true %}
+    authenticationModule: 'src/auth.ts',{% endif %}
     noWriteIfUnchanged: true,
   });
 })();

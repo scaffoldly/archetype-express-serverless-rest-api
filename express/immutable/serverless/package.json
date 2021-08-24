@@ -3,7 +3,7 @@
   "version": "1.0.0-0",
   "license": "UNLICENSED",
   "scripts": {
-    "prepare": "yarn dotenv && yarn tsoa && yarn build",
+    "prepare": "yarn dotenv && yarn openapi{% if persistence == 'dynamodb' %} && yarn types && yarn dynamodb{% endif %} && yarn tsoa && yarn build",
     "build": "tsc",
     "start": "serverless offline start",
     "deploy": "serverless deploy",
@@ -13,7 +13,7 @@
     "types": "ts-node types.ts",
     "tsoa": "node tsoa.js",
     "dynamodb": "serverless dynamodb install",
-    "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix"
+    "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix && yarn run prettier --write '*/**/*.{js,ts,tsx}'"
   },
   "devDependencies": {
     "@scaffoldly/openapi-generator": "^1.0.14",
@@ -43,7 +43,7 @@
     "typescript": "^4.2.3"
   },
   "dependencies": {
-    "@scaffoldly/serverless-util": "^3.0.58",
+    "@scaffoldly/serverless-util": "^3.0.60",
     "@types/aws-lambda": "^8.10.77",
     "@vendia/serverless-express": "^4.3.7",
     "axios": "^0.21.1",

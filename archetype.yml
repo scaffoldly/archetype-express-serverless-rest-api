@@ -11,11 +11,20 @@ script:
 
   - set:
       application-name:
-        prompt: "Application Name"
+        prompt: "Application Name?"
       repository-name:
-        prompt: "Repository Name"
+        prompt: "Repository Name?"
       service-name:
-        prompt: "Service Name"
+        prompt: "Service Name?"
+      auth-service:
+        prompt: "Auth Service Exists?"
+        type: bool
+      persistence:
+        prompt: "Persistence Type? [dynamodb]"
+        default: ""
+      entities:
+        prompt: "Entities?"
+        type: list
 
   - render:
       directory:
@@ -23,7 +32,7 @@ script:
 
   - render:
       directory:
-        source: "express/immutable"
+        source: "express/immutable/serverless"
 
   - if:
       conditions:
@@ -35,3 +44,16 @@ script:
         - render:
             directory:
               source: "express/serverless"
+
+  - if:
+      is-true: "{{ persistence == 'dynamodb' }}"
+      then:
+        - for:
+            item:
+              in: entities
+              name: entity
+            do:
+              - info: "Rendering {{ entity }} entity for DynamoDB"
+              - render:
+                  directory:
+                    source: "express/immutable/dynamodb"
