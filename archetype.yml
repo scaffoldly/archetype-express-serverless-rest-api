@@ -1,6 +1,30 @@
 
 ---
 script:
+
+  - rules:
+      - source:
+          Junk Files:
+            patterns:
+              - glob: "*.DS_Store"
+            action: SKIP
+
+  - set:
+      application-name:
+        prompt: "Application Name"
+      repository-name:
+        prompt: "Repository Name"
+      service-name:
+        prompt: "Service Name"
+
+  - render:
+      directory:
+        source: "github"
+
+  - render:
+      directory:
+        source: "express/immutable"
+
   - if:
       conditions:
         - switch-enabled: overwrite
@@ -8,7 +32,6 @@ script:
         - rules:
             - destination:
                 overwrite: true
-
-  - render:
-      directory:
-        source: "github"
+        - render:
+            directory:
+              source: "express/serverless"

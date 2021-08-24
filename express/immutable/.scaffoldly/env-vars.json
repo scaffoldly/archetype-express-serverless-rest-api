@@ -1,0 +1,5 @@
+{
+  "SERVERLESS_API_DOMAIN": "localhost",
+  "SERVICE_NAME": "{{ service-name }}",
+  "APPLICATION_NAME": "{{ application-name }}"
+}
