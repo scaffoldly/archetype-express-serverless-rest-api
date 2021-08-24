@@ -60,8 +60,8 @@ export class {{ entity | pascal_case }}Service {
       .query({{ entity | pascal_case }}Model.prefix('pk', userId(user, '__ANONYMOUS__')))
       .where('sk')
       .beginsWith({{ entity | pascal_case }}Model.prefix('sk'))
-      .filter('expires')
-      .exists(false)
+      // .filter('expires')
+      // .exists(false)
       .select('COUNT')
       .exec()
       .promise();
@@ -69,9 +69,9 @@ export class {{ entity | pascal_case }}Service {
     let query = this.{{ entity | lower_case }}Model.model
       .query({{ entity | pascal_case }}Model.prefix('pk', userId(user, '__ANONYMOUS__')))
       .where('sk')
-      .beginsWith({{ entity | pascal_case }}Model.prefix('sk'))
-      .filter('expires')
-      .exists(false);
+      .beginsWith({{ entity | pascal_case }}Model.prefix('sk'));
+      // .filter('expires')
+      // .exists(false);
 
     if (nextPk && nextSk) {
       query = query.startKey(nextPk, nextSk);
