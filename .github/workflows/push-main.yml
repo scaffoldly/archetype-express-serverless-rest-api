@@ -1,0 +1,26 @@
+name: Push to Main
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+jobs:
+  prerelease:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: '12'
+      - uses: scaffoldly/archetect-render-action@v1
+        with:
+          source: "."
+          destination: "${{ runner.temp }}/rendered"
+          options: "-a application-name='Example Service' -a repository-name=example-api -a service-name=example -a auth-service=y -a persistence=dynamodb -a entities=foo,bar"
+      - run: yarn
+        working-directory: "${{ runner.temp }}/rendered"
+        # TODO Other checks
+      - uses: scaffoldly/bump-version-action@v1
+        with:
+          action: prerelease
+          version-file: sly.json
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
