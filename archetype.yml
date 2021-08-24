@@ -11,4 +11,4 @@ script:
 
   - render:
       directory:
-        source: "github-base"
+        source: "github"
