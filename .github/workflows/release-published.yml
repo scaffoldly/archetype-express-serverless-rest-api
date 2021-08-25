@@ -1,0 +1,20 @@
+name: Release
+
+on:
+  release:
+    types: 
+      - published
+
+jobs:
+  prerelease:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: '12'
+      - uses: scaffoldly/bump-version-action@v1
+        with:
+          action: postrelease
+          version-file: sly.json
+          repo-token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,4 +1,4 @@
-name: "Nonlive Deploy"
+name: "Live Deploy"
 
 on:
   workflow_dispatch:
@@ -40,7 +40,7 @@ jobs:
       - run: yarn
       - uses: scaffoldly/bump-version-action@v1
         with:
-          action: prerelease
+          action: postrelease
           version-file: package.json
           repo-token: {{ '${{ secrets.GITHUB_TOKEN }}' }}
       - run: yarn deploy --stage $NODE_ENV
