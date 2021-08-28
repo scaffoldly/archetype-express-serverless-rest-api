@@ -1,4 +1,4 @@
-service: {{ service-name }}
+service: {{ repository-name }}
 
 frameworkVersion: ^2.2.0
 
@@ -110,13 +110,12 @@ custom:
   serverless-offline:
     useChildProcesses: false
     noPrependStageInUrl: true
-    prefix: ${self:service}
+    prefix: {{ service-name }}
 
   bundle:
     packager: yarn
     externals:
       - tsoa
-      - tweetsodium
 
   serverless-configuration:
     local:
