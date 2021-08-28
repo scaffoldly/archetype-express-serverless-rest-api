@@ -13,9 +13,7 @@ jobs:
       matrix:
         archetect-options:
           - "-s github -s serverless -a repository-name=test-sls-rest-api"
-          - "-s github -s serverless -a repository-name=test-sls-rest-api -a auth=true"
           - "-s github -s serverless -a repository-name=test-sls-rest-api -a persistence=dynamodb"
-          - "-s github -s serverless -a repository-name=test-sls-rest-api -a persistence=dynamodb -a auth=true"
           - "-s github -s serverless -s entity -a repository-name=test-sls-rest-api -a persistence=dynamodb -a entities=foo"
           - "-s github -s serverless -s entity -a repository-name=test-sls-rest-api -a persistence=dynamodb -a entities=foo -a auth=true"
           - "-s github -s serverless -s entity -a repository-name=test-sls-rest-api -a persistence=dynamodb -a entities=foo,bar"
