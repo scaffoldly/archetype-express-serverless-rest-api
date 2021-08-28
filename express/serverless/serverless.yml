@@ -13,7 +13,7 @@ plugins:
 provider:
   name: aws
   runtime: nodejs12.x
-  cfnRole: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/${self:service}-cloudformation
+  cfnRole: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/{{ repository-name }}-cloudformation
   stage: ${opt:stage, "local"}
   logRetentionInDays: 1
   apiGateway:
@@ -30,7 +30,7 @@ provider:
 
 functions:
   lambda-handler:
-    role: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/${self:service}-${opt:stage, "local"}
+    role: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/{{ repository-name }}}-${opt:stage, "local"}
     handler: src/lambda.handler
     timeout: 30
     events:
@@ -49,7 +49,7 @@ functions:
 
 {% if persistence == 'dynamodb' %}
   dynamodb-event-handler:
-    role: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/${self:service}-${opt:stage, "local"}
+    role: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/{{ repository-name }}-${opt:stage, "local"}
     handler: src/lambda.dynamoDbEventHandler
     timeout: 30
     events:
@@ -61,11 +61,11 @@ functions:
 {% endif %}
 
   # sns-event-handler:
-  #   role: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/${self:service}-${opt:stage, "local"}
+  #   role: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/{{ repository-name }}-${opt:stage, "local"}
   #   handler: src/lambda.snsEventHandler
   #   timeout: 30
   #   events:
-  #     - sns: ${opt:stage, "local"}-${self:service}
+  #     - sns: ${opt:stage, "local"}-{{ repository-name }}
 
 {% if persistence == 'dynamodb' %}
 resources:
@@ -74,7 +74,7 @@ resources:
       Type: AWS::DynamoDB::Table
       DeletionPolicy: Retain
       Properties:
-        TableName: ${opt:stage, "local"}-${self:service}
+        TableName: ${opt:stage, "local"}-{{ repository-name }}
         KeySchema:
           - AttributeName: pk
             KeyType: HASH
