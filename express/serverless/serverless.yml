@@ -65,7 +65,7 @@ functions:
   #   handler: src/lambda.snsEventHandler
   #   timeout: 30
   #   events:
-  #     - sns: ${opt:stage, "local"}-{{ repository-name }}
+  #     - sns: ${opt:stage, "local"}-${self:service}
 
 {% if persistence == 'dynamodb' %}
 resources:
@@ -74,7 +74,7 @@ resources:
       Type: AWS::DynamoDB::Table
       DeletionPolicy: Retain
       Properties:
-        TableName: ${opt:stage, "local"}-{{ repository-name }}
+        TableName: ${opt:stage, "local"}-${self:service}
         KeySchema:
           - AttributeName: pk
             KeyType: HASH
