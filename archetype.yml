@@ -1,60 +1,68 @@
 
 ---
 script:
-
   - rules:
-      - source:
-          Junk Files:
-            patterns:
-              - glob: "*.DS_Store"
-            action: SKIP
+      - destination:
+          overwrite: true
 
   - set:
-      application-name:
-        prompt: "Application Name?"
       repository-name:
         prompt: "Repository Name?"
-      service-name:
-        prompt: "Service Name?"
-      auth-service:
+      auth:
         prompt: "Auth Service Exists?"
         type: bool
+        default: false
       persistence:
-        prompt: "Persistence Type? [dynamodb]"
-        default: ""
-      entities:
-        prompt: "Entities?"
-        type: list
+        prompt: "Persistence Type?"
+        type:
+          enum:
+            - none
+            - dynamodb
+        default: none
 
   - if:
       conditions:
-        - switch-enabled: overwrite
+        - switch-enabled: github
       then:
-        - rules:
-            - destination:
-                overwrite: true
         - render:
             directory:
               source: "github"
 
-  - render:
-      directory:
-        source: "express/immutable/serverless"
+  - if:
+      conditions:
+        - switch-enabled: serverless
+      then:
+        - set:
+            service-name:
+              value: "{{ repository-name | trim_end_matches(pat='-sls-rest-api') }}"
+        - rules:
+            - destination:
+                overwrite: false
+        - render:
+            directory:
+              source: "immutable/serverless"
 
   - if:
       conditions:
-        - switch-enabled: overwrite
+        - switch-enabled: serverless
       then:
-        - rules:
-            - destination:
-                overwrite: true
         - render:
             directory:
-              source: "express/serverless"
+              source: "serverless"
 
   - if:
-      is-true: "{{ persistence == 'dynamodb' }}"
+      conditions:
+        - switch-enabled: entity
+        - is-true: "{{ persistence == 'dynamodb' }}"
       then:
+        - set:
+            entities:
+              prompt: "Entities?"
+              default: ""
+              type: list
+        - rules:
+            - destination:
+                overwrite: false
         - for:
             item:
               in: entities
@@ -63,4 +71,4 @@ script:
               - info: "Rendering {{ entity }} entity for DynamoDB"
               - render:
                   directory:
-                    source: "express/immutable/dynamodb"
+                    source: "immutable/dynamodb"

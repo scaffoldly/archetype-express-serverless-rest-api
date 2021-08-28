@@ -13,13 +13,13 @@ const envVars = NODE_ENV
   await generateSpec({
     basePath: `/${envVars['service-name']}`,
     name: envVars['application-name'],
-    version: packageJson.version,{% if auth-service == true %}
+    version: packageJson.version,{% if auth == true %}
     description: `To generate a JWT token, go to the <a href="https://${envVars.SERVERLESS_API_DOMAIN}/auth/jwt.html" target="_blank">JWT Token Generator</a>`,{% endif %}
     entryFile: 'src/app.ts',
     noImplicitAdditionalProperties: 'throw-on-extras',
     controllerPathGlobs: ['src/**/*Controller*.ts'],
     outputDirectory: 'src',
-    specVersion: 3,{% if auth-service == true %}
+    specVersion: 3,{% if auth == true %}
     securityDefinitions: {
       jwt: {
         type: 'http',
@@ -34,7 +34,7 @@ const envVars = NODE_ENV
     entryFile: 'src/app.ts',
     noImplicitAdditionalProperties: 'throw-on-extras',
     controllerPathGlobs: ['src/**/*Controller*.ts'],
-    routesDir: 'src',{% if auth-service == true %}
+    routesDir: 'src',{% if auth == true %}
     authenticationModule: 'src/auth.ts',{% endif %}
     noWriteIfUnchanged: true,
   });

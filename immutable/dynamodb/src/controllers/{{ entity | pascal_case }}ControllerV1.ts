@@ -10,7 +10,7 @@ import {
   Query,
   Request,
   Response,
-  Route,{% if auth-service == true %}
+  Route,{% if auth == true %}
   Security,{% endif %}
   Tags,
 } from 'tsoa';
@@ -29,7 +29,7 @@ export class {{ entity | pascal_case }}ControllerV1 extends Controller {
 
   @Post()
   @Response<ErrorResponse>('4XX')
-  @Response<ErrorResponse>('5XX'){% if auth-service == true %}
+  @Response<ErrorResponse>('5XX'){% if auth == true %}
   @Security('jwt'){% endif %}
   public create(
     @Body() request: {{ entity | pascal_case }}Request,
@@ -40,7 +40,7 @@ export class {{ entity | pascal_case }}ControllerV1 extends Controller {
 
   @Get()
   @Response<ErrorResponse>('4XX')
-  @Response<ErrorResponse>('5XX'){% if auth-service == true %}
+  @Response<ErrorResponse>('5XX'){% if auth == true %}
   @Security('jwt'){% endif %}
   public list(
     @Request() httpRequest: HttpRequestWithUser,
@@ -53,7 +53,7 @@ export class {{ entity | pascal_case }}ControllerV1 extends Controller {
 
   @Get('{{ '{' }}{{ entity | lower_case }}Id{{ '}' }}')
   @Response<ErrorResponse>('4XX')
-  @Response<ErrorResponse>('5XX'){% if auth-service == true %}
+  @Response<ErrorResponse>('5XX'){% if auth == true %}
   @Security('jwt'){% endif %}
   public getById(
     @Path('{{ entity | lower_case }}Id') {{ entity | lower_case }}Id: string,
@@ -64,7 +64,7 @@ export class {{ entity | pascal_case }}ControllerV1 extends Controller {
 
   @Patch('{{ '{' }}{{ entity | lower_case }}Id{{ '}' }}')
   @Response<ErrorResponse>('4XX')
-  @Response<ErrorResponse>('5XX'){% if auth-service == true %}
+  @Response<ErrorResponse>('5XX'){% if auth == true %}
   @Security('jwt'){% endif %}
   public updateById(
     @Path('{{ entity | lower_case }}Id') {{ entity | lower_case }}Id: string,
@@ -77,7 +77,7 @@ export class {{ entity | pascal_case }}ControllerV1 extends Controller {
   @Delete('{{ '{' }}{{ entity | lower_case }}Id{{ '}' }}')
   @Response<null>('204')
   @Response<ErrorResponse>('4XX')
-  @Response<ErrorResponse>('5XX'){% if auth-service == true %}
+  @Response<ErrorResponse>('5XX'){% if auth == true %}
   @Security('jwt'){% endif %}
   public deleteById(
     @Path('{{ entity | lower_case }}Id') {{ entity | lower_case }}Id: string,

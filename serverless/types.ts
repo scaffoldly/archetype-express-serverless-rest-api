@@ -15,4 +15,10 @@ async function types(): Promise<void> {
   }
 }
 
-types();
+(async () => {
+  try {
+    await types();
+  } catch (e) {
+    console.warn('Error generating types', e.message);
+  }
+})();

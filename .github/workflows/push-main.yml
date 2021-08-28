@@ -6,8 +6,20 @@ on:
     branches: [main]
 
 jobs:
-  prerelease:
+  render:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        archetect-options:
+          - "-s github -s serverless -a repository-name=test-sls-rest-api"
+          - "-s github -s serverless -a repository-name=test-sls-rest-api -a auth=true"
+          - "-s github -s serverless -a repository-name=test-sls-rest-api -a persistence=dynamodb"
+          - "-s github -s serverless -a repository-name=test-sls-rest-api -a persistence=dynamodb -a auth=true"
+          - "-s github -s serverless -s entity -a repository-name=test-sls-rest-api -a persistence=dynamodb -a entities=foo"
+          - "-s github -s serverless -s entity -a repository-name=test-sls-rest-api -a persistence=dynamodb -a entities=foo -a auth=true"
+          - "-s github -s serverless -s entity -a repository-name=test-sls-rest-api -a persistence=dynamodb -a entities=foo,bar"
+          - "-s github -s serverless -s entity -a repository-name=test-sls-rest-api -a persistence=dynamodb -a entities=foo,bar -a auth=true"
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2-beta
@@ -17,11 +29,16 @@ jobs:
         with:
           source: "."
           destination: "${{ runner.temp }}/rendered"
-          options: "-s overwrite -a application-name='Example Service' -a repository-name=example-api -a service-name=example -a auth-service=y -a persistence=dynamodb -a entities=foo,bar"
+          options: "${{ matrix.archetect-options }}"
           commit: "false"
+          post-render-command: "npx eslint '*/**/*.{js,ts,tsx}' --fix && npx prettier --write '*/**/*.{js,ts,tsx}'"
       - run: yarn
         working-directory: "${{ runner.temp }}/rendered"
-        # TODO Other checks
+  prerelease:
+    needs: render
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
       - uses: scaffoldly/bump-version-action@v1
         with:
           action: prerelease
