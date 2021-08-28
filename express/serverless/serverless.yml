@@ -15,8 +15,7 @@ provider:
   runtime: nodejs12.x
   cfnRole: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/${self:service}-cloudformation
   stage: ${opt:stage, "local"}
-  apiKeys:
-    - ${self:service}-${opt:stage, "local"}
+  logRetentionInDays: 1
   apiGateway:
     restApiId: ${env:AWS_REST_API_ID, ""}
     restApiRootResourceId: ${env:AWS_REST_API_ROOT_RESOURCE_ID, ""}
