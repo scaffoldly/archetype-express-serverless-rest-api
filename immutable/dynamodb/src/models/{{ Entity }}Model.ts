@@ -1,16 +1,16 @@
 import { Joi, Model, SERVICE_NAME, STAGE, Table } from '@scaffoldly/serverless-util';
-import { {{ entity | pascal_case }} } from './interfaces';
-import { {{ entity | lower_case }} } from './schemas/{{ entity | pascal_case }}';
+import { {{ Entity }} } from './interfaces';
+import { {{ entity }} } from './schemas/{{ Entity }}';
 
 const TABLE_SUFFIX = '';
 
-export class {{ entity | pascal_case }}Model {
-  public readonly table: Table<{{ entity | pascal_case }}>;
+export class {{ EntityModel }} {
+  public readonly table: Table<{{ Entity }}>;
 
-  public readonly model: Model<{{ entity | pascal_case }}>;
+  public readonly model: Model<{{ Entity }}>;
 
   constructor() {
-    this.table = new Table(TABLE_SUFFIX, SERVICE_NAME, STAGE, {{ entity | lower_case }}, 'pk', 'sk', [
+    this.table = new Table(TABLE_SUFFIX, SERVICE_NAME, STAGE, {{ entity }}, 'pk', 'sk', [
       { hashKey: 'sk', rangeKey: 'pk', name: 'sk-pk-index', type: 'global' },
     ]);
 
@@ -22,11 +22,11 @@ export class {{ entity | pascal_case }}Model {
     if (col === 'pk') {
       return `userid_${value || ''}`;
     }
-    return `{{ entity | lower_case }}_${value || ''}`;
+    return `{{ entity }}_${value || ''}`;
   };
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  static is{{ entity | pascal_case }} = (obj: any): boolean => {
+  static {{ isEntity }} = (obj: any): boolean => {
     if (!obj || !obj.pk || !obj.sk || typeof obj.pk !== 'string' || typeof obj.sk !== 'string') {
       return false;
     }
@@ -34,8 +34,8 @@ export class {{ entity | pascal_case }}Model {
     const { pk, sk } = obj as { pk: string; sk: string };
 
     try {
-      Joi.assert(pk, {{ entity | lower_case }}.pk);
-      Joi.assert(sk, {{ entity | lower_case }}.sk);
+      Joi.assert(pk, {{ entity }}.pk);
+      Joi.assert(sk, {{ entity }}.sk);
     } catch (e) {
       return false;
     }

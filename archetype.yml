@@ -35,20 +35,21 @@ script:
         - set:
             service-name:
               value: "{{ repository-name | trim_end_matches(pat='-sls-rest-api') }}"
-        - rules:
-            - destination:
-                overwrite: false
         - render:
             directory:
-              source: "immutable/serverless"
+              source: "serverless"
 
   - if:
       conditions:
         - switch-enabled: serverless
       then:
-        - render:
-            directory:
-              source: "serverless"
+        - scope:
+            - rules:
+                - destination:
+                    overwrite: false
+            - render:
+                directory:
+                  source: "immutable/serverless"
 
   - if:
       conditions:
@@ -66,9 +67,36 @@ script:
         - for:
             item:
               in: entities
-              name: entity
             do:
-              - info: "Rendering {{ entity }} entity for DynamoDB"
-              - render:
-                  directory:
-                    source: "immutable/dynamodb"
+              - scope:
+                - set:
+                    Entity:
+                      value: "{{ item | pascal_case }}"
+                    entity:
+                      value: "{{ item | lower_case }}"
+                    entityId:
+                      value: "{{ entity }}Id"
+                    entityRequest:
+                      value: "{{ entity }}Request"
+                    EntityRequest:
+                      value: "{{ Entity }}Request"
+                    EntityResponse:
+                      value: "{{ Entity }}Response"
+                    EntityListResponse:
+                      value: "{{ Entity }}ListResponse"
+                    EntityService:
+                      value: "{{ Entity }}Service"
+                    entityService:
+                      value: "{{ entity }}Service"
+                    EntityControllerV1:
+                      value: "{{ Entity }}ControllerV1"
+                    entityModel:
+                      value: "{{ entity }}Model"
+                    EntityModel:
+                      value: "{{ Entity }}Model"
+                    isEntity:
+                      value: "is{{ Entity }}"
+                - info: "Rendering {{ item }} entity for DynamoDB"
+                - render:
+                    directory:
+                      source: "immutable/dynamodb"
