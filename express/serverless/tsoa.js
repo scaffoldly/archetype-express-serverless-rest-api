@@ -11,8 +11,8 @@ const envVars = NODE_ENV
 (async () => {
   console.log('Generating spec...');
   await generateSpec({
-    basePath: `/${envVars.SERVICE_NAME}`,
-    name: envVars.APPLICATION_NAME,
+    basePath: `/${envVars['service-name']}`,
+    name: envVars.['application-name'],
     version: packageJson.version,{% if auth-service == true %}
     description: `To generate a JWT token, go to the <a href="https://${envVars.SERVERLESS_API_DOMAIN}/auth/jwt.html" target="_blank">JWT Token Generator</a>`,{% endif %}
     entryFile: 'src/app.ts',
