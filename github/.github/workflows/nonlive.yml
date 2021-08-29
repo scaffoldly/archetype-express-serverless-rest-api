@@ -36,7 +36,9 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: ./src/services/openapi
-          key: {{ '${{ runner.os }}-openapi' }}
+          key: {{ '${{ runner.os }}-openapi-${{ hashFiles('./src/services/openapi/versions.json') }}' }}
+          restore-keys: |
+            {{ '${{ runner.os }}-openapi-' }}
       - run: yarn
       - uses: scaffoldly/bump-version-action@v1
         with:

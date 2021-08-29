@@ -16,7 +16,7 @@
     "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix && yarn run prettier --write '*/**/*.{js,ts,tsx}'"
   },
   "devDependencies": {
-    "@scaffoldly/openapi-generator": "^1.0.18",
+    "@scaffoldly/openapi-generator": "^1.0.20",
     "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.11",
     "@typescript-eslint/eslint-plugin": "^4.4.1",

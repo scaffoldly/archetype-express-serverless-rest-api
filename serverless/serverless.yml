@@ -1,4 +1,4 @@
-service: {{ repository-name }}
+service: ${file(serverless.config.js):repositoryName}
 
 frameworkVersion: ^2.2.0
 
@@ -13,7 +13,7 @@ plugins:
 provider:
   name: aws
   runtime: nodejs12.x
-  cfnRole: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/{{ repository-name }}-cloudformation
+  cfnRole: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/${self:service}-cloudformation
   stage: ${opt:stage, "local"}
   logRetentionInDays: 1
   apiGateway:
@@ -30,7 +30,7 @@ provider:
 
 functions:
   lambda-handler:
-    role: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/{{ repository-name }}}-${opt:stage, "local"}
+    role: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/${self:service}-${opt:stage, "local"}
     handler: src/lambda.handler
     timeout: 30
     events:
@@ -49,7 +49,7 @@ functions:
 
 {% if persistence == 'dynamodb' %}
   dynamodb-event-handler:
-    role: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/{{ repository-name }}-${opt:stage, "local"}
+    role: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/${self:service}-${opt:stage, "local"}
     handler: src/lambda.dynamoDbEventHandler
     timeout: 30
     events:
@@ -61,7 +61,7 @@ functions:
 {% endif %}
 
   # sns-event-handler:
-  #   role: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/{{ repository-name }}-${opt:stage, "local"}
+  #   role: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/${self:service}-${opt:stage, "local"}
   #   handler: src/lambda.snsEventHandler
   #   timeout: 30
   #   events:
@@ -110,7 +110,7 @@ custom:
   serverless-offline:
     useChildProcesses: false
     noPrependStageInUrl: true
-    prefix: {{ service-name }}
+    prefix: ${file(serverless.config.js):serviceName}
 
   bundle:
     packager: yarn

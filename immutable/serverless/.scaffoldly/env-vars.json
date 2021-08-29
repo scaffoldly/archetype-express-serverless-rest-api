@@ -1,5 +1,6 @@
 {
   "api-gateway-domain": "localhost",
   "service-name": "{{ service-name }}",
-  "application-name": "{{ service-name }}"
+  "application-name": "{{ service-name }}",
+  "repository-name": "{{ repository-name }}"
 }
