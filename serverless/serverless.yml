@@ -48,16 +48,16 @@ functions:
           method: options
 
 {% if persistence == 'dynamodb' %}
-  dynamodb-event-handler:
-    role: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/${self:service}-${opt:stage, "local"}
-    handler: src/lambda.dynamoDbEventHandler
-    timeout: 30
-    events:
-      - stream:
-          type: dynamodb
-          batchSize: 1
-          arn:
-            Fn::GetAtt: [Table, StreamArn]
+  # dynamodb-event-handler:
+  #   role: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/${self:service}-${opt:stage, "local"}
+  #   handler: src/lambda.dynamoDbEventHandler
+  #   timeout: 30
+  #   events:
+  #     - stream:
+  #         type: dynamodb
+  #         batchSize: 1
+  #         arn:
+  #           Fn::GetAtt: [Table, StreamArn]
 {% endif %}
 
   # sns-event-handler:
