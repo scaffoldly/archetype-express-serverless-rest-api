@@ -50,6 +50,15 @@ script:
             - render:
                 directory:
                   source: "immutable/serverless"
+            - render:
+                directory:
+                  source: "immutable/git"
+                  destination: ".git"
+            - exec:
+                command: chmod
+                args:
+                  - "ugo+x"
+                  - ".git/hooks/pre-commit"
 
   - if:
       conditions:
