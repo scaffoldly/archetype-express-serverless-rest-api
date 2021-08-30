@@ -116,6 +116,9 @@ custom:
     packager: yarn
     externals:
       - tsoa
+    copyFiles:
+      - from: 'public/*'
+        to: './'
 
   serverless-configuration:
     local:
