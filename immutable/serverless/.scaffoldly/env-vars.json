@@ -1,6 +1,8 @@
 {
+  "stage-domain": "localhost",
   "api-gateway-domain": "localhost",
   "service-name": "{{ service-name }}",
   "application-name": "{{ service-name }}",
-  "repository": "{{ repository-name }}"
+  "repository": "{{ repository-name }}",
+  "organization": "{{ service-name }}"
 }

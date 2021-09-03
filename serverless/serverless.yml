@@ -22,6 +22,8 @@ provider:
   tracing:
     lambda: true
   environment:
+    STAGE_DOMAIN: ${env:stage-domain, "localhost"}
+    API_GATEWAY_DOMAIN: ${env:api-gateway-domain, "localhost"}
     SERVICE_NAME: ${self:service}
     STAGE: ${opt:stage, "local"}
   stackTags:

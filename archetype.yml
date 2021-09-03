@@ -22,6 +22,33 @@ script:
 
   - if:
       conditions:
+        - switch-enabled: totp
+        - switch-enabled: aws-ses
+      then:
+        - set:
+            totp:
+              value: true
+        - set:
+            persistence:
+              value: "dynamodb"
+        - render:
+            directory:
+              source: "addons/email/base"
+        - render:
+            directory:
+              source: "addons/email/aws-ses"
+        - render:
+            directory:
+              source: "addons/encryption/base"
+        - render:
+            directory:
+              source: "addons/encryption/aws-kms"
+        - render:
+            directory:
+              source: "addons/totp/base"
+
+  - if:
+      conditions:
         - switch-enabled: github
       then:
         - render:
@@ -38,6 +65,12 @@ script:
         - render:
             directory:
               source: "serverless"
+
+  - exec:
+      command: chmod
+      args:
+        - "ugo+x"
+        - "scripts/prepare.sh"
 
   - if:
       conditions:
@@ -100,6 +133,19 @@ script:
                 - render:
                     directory:
                       source: "immutable/dynamodb"
+
+  - if:
+      conditions:
+        - switch-enabled: totp
+        - switch-enabled: aws-ses
+      then:
+        - exec:
+            command: yarn
+            args:
+              - "add"
+              - "lodash"
+              - "node-2fa"
+              - "@types/notp"
 
   - exec:
       command: npx

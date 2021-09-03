@@ -18,6 +18,7 @@ jobs:
           - "-s github -s serverless -s entity -a repository-name=test-sls-rest-api -a persistence=dynamodb -a entities=foo -a auth=true"
           - "-s github -s serverless -s entity -a repository-name=test-sls-rest-api -a persistence=dynamodb -a entities=foo,bar"
           - "-s github -s serverless -s entity -a repository-name=test-sls-rest-api -a persistence=dynamodb -a entities=foo,bar -a auth=true"
+          - "-s github -s serverless -s totp -s aws-ses -a repository-name=totp-sls-rest-api"
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2-beta
