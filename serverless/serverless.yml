@@ -1,4 +1,4 @@
-service: ${file(serverless.config.js):repositoryName}
+service: ${file(serverless.config.js):serviceName}
 
 frameworkVersion: ^2.2.0
 
@@ -25,9 +25,11 @@ provider:
     STAGE_DOMAIN: ${env:stage-domain, "localhost"}
     API_GATEWAY_DOMAIN: ${env:api-gateway-domain, "localhost"}
     SERVICE_NAME: ${self:service}
+    SERVICE_SLUG: ${file(serverless.config.js):serviceSlug}
     STAGE: ${opt:stage, "local"}
   stackTags:
     ServiceName: ${self:service}
+    ServiceSlug: ${file(serverless.config.js):serviceSlug}
     ServiceStage: ${opt:stage, "local"}
 
 functions:
@@ -112,7 +114,7 @@ custom:
   serverless-offline:
     useChildProcesses: false
     noPrependStageInUrl: true
-    prefix: ${file(serverless.config.js):serviceName}
+    prefix: ${file(serverless.config.js):serviceSlug}
 
   bundle:
     packager: yarn

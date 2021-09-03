@@ -12,11 +12,11 @@ export class SesService implements EmailService {
 
     const result = await ses
       .sendTemplatedEmail({
-        Source: `${env.organization} <no-reply@${this.domain}>`,
+        Source: `${env['organization-name']} <no-reply@${this.domain}>`,
         Destination: { ToAddresses: [email] },
         Template: await this.fetchTemplate('totp'),
         TemplateData: JSON.stringify({
-          Organization: env.organization,
+          Organization: env['organization-name'],
           OTP: token,
         }),
       })

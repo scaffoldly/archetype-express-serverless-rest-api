@@ -30,7 +30,6 @@ jobs:
           destination: "${{ runner.temp }}/rendered"
           options: "${{ matrix.archetect-options }}"
           commit: "false"
-          post-render-command: "npx eslint '*/**/*.{js,ts,tsx}' --fix && npx prettier --write '*/**/*.{js,ts,tsx}'"
       - run: yarn
         working-directory: "${{ runner.temp }}/rendered"
   prerelease:
