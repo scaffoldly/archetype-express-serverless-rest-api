@@ -1,4 +1,4 @@
-import { DecodedJwtPayload, HttpError, userId } from '@scaffoldly/serverless-util';
+import { BaseJwtPayload, HttpError, extractUserId } from '@scaffoldly/serverless-util';
 import moment from 'moment';
 import { ulid } from 'ulid';
 import { {{ EntityRequest }}, {{ EntityResponse }}, {{ EntityListResponse }} } from '../interfaces/{{ entity }}';
@@ -14,17 +14,17 @@ export class {{ EntityService }} {
 
   public create = async (
     {{ entityRequest }}: {{ EntityRequest }},
-    user: DecodedJwtPayload,
+    user: BaseJwtPayload,
   ): Promise<{{ Entity }}> => {
     const {{ entityId }} = ulid();
     console.log(`Creating with id:`, JSON.stringify({{ entityRequest }}));
 
     const {{ entity }} = await this.{{ entityModel }}.model.create(
       {
-        pk: {{ EntityModel }}.prefix('pk', userId(user, '__ANONYMOUS__')),
+        pk: {{ EntityModel }}.prefix('pk', extractUserId(user, '__ANONYMOUS__')),
         sk: {{ EntityModel }}.prefix('sk', {{ entityId }}),
         {{ entityId }},
-        userId: userId(user, '__ANONYMOUS__'),
+        userId: extractUserId(user, '__ANONYMOUS__'),
         ...{{ entityRequest }},
       },
       { overwrite: false },
@@ -40,7 +40,7 @@ export class {{ EntityService }} {
   };
 
   public list = async (
-    user: DecodedJwtPayload,
+    user: BaseJwtPayload,
     nextPk?: string,
     nextSk?: string,
     limit?: number,
@@ -50,14 +50,14 @@ export class {{ EntityService }} {
     }
 
     console.log(
-      `Listing for user: ${userId(
+      `Listing for user: ${extractUserId(
         user,
         '__ANONYMOUS__',
       )}, nextPk: ${nextPk}, nextSk: ${nextSk}, limit: ${limit}`,
     );
 
     const [count] = await this.{{ entityModel }}.model
-      .query({{ EntityModel }}.prefix('pk', userId(user, '__ANONYMOUS__')))
+      .query({{ EntityModel }}.prefix('pk', extractUserId(user, '__ANONYMOUS__')))
       .where('sk')
       .beginsWith({{ EntityModel }}.prefix('sk'))
       .filter('expires')
@@ -67,7 +67,7 @@ export class {{ EntityService }} {
       .promise();
 
     let query = this.{{ entityModel }}.model
-      .query({{ EntityModel }}.prefix('pk', userId(user, '__ANONYMOUS__')))
+      .query({{ EntityModel }}.prefix('pk', extractUserId(user, '__ANONYMOUS__')))
       .where('sk')
       .beginsWith({{ EntityModel }}.prefix('sk'))
       .filter('expires')
@@ -102,9 +102,9 @@ export class {{ EntityService }} {
     };
   };
 
-  public getById = async ({{ entityId }}: string, user: DecodedJwtPayload): Promise<{{ EntityResponse }}> => {
+  public getById = async ({{ entityId }}: string, user: BaseJwtPayload): Promise<{{ EntityResponse }}> => {
     const {{ entity }} = await this.{{ entityModel }}.model.get(
-      {{ EntityModel }}.prefix('pk', userId(user, '__ANONYMOUS__')),
+      {{ EntityModel }}.prefix('pk', extractUserId(user, '__ANONYMOUS__')),
       {{ EntityModel }}.prefix('sk', {{ entityId }}),
     );
 
@@ -118,10 +118,10 @@ export class {{ EntityService }} {
   public updateById = async (
     {{ entityId }}: string,
     {{ entityRequest }}: {{ EntityRequest }},
-    user: DecodedJwtPayload,
+    user: BaseJwtPayload,
   ): Promise<{{ EntityResponse }}> => {
     const {{ entity }} = await this.{{ entityModel }}.model.update({
-      pk: {{ EntityModel }}.prefix('pk', userId(user, '__ANONYMOUS__')),
+      pk: {{ EntityModel }}.prefix('pk', extractUserId(user, '__ANONYMOUS__')),
       sk: {{ EntityModel }}.prefix('sk', {{ entityId }}),
       ...{{ entityRequest }},
     });
@@ -135,13 +135,13 @@ export class {{ EntityService }} {
 
   public deleteById = async (
     {{ entityId }}: string,
-    user: DecodedJwtPayload,
+    user: BaseJwtPayload,
     async = false,
   ): Promise<{{ EntityResponse }} | null> => {
     if (async) {
       // Set expires on row for DynamoDB expiration
       const {{ entity }} = await this.{{ entityModel }}.model.update({
-        pk: {{ EntityModel }}.prefix('pk', userId(user, '__ANONYMOUS__')),
+        pk: {{ EntityModel }}.prefix('pk', extractUserId(user, '__ANONYMOUS__')),
         sk: {{ EntityModel }}.prefix('sk', {{ entityId }}),
         expires: moment().unix(),
       });
@@ -150,7 +150,7 @@ export class {{ EntityService }} {
     }
 
     await this.{{ entityModel }}.model.destroy(
-      {{ EntityModel }}.prefix('pk', userId(user, '__ANONYMOUS__')),
+      {{ EntityModel }}.prefix('pk', extractUserId(user, '__ANONYMOUS__')),
       {{ EntityModel }}.prefix('sk', {{ entityId }}),
     );
     return null;
