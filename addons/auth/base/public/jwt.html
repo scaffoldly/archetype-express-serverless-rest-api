@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+
+    <title>JWT Token Generator</title>
+
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      function login() {
+        const url = 'api/v1/jwts/email';
+        const data = {
+          email: $('#email').val(),
+          code: $('#code').val() || undefined,
+          remember: true,
+        };
+        $('#tokenFormGroup').hide('slow');
+        $('#emailFormGroup').hide('slow');
+        $('#response').show('slow');
+        $('#responseBody').html(`Loading...`);
+        $.ajax({
+          url: url,
+          type: 'POST',
+          data: JSON.stringify(data),
+          contentType: 'application/json',
+          dataType: 'json',
+        })
+          .done((response) => {
+            console.log('Success!', JSON.stringify(response));
+            $('#responseBody').html(JSON.stringify(response, null, 2));
+            handleResponse(response);
+          })
+          .fail((err) => {
+            console.log('Login Failure', JSON.stringify(err));
+            $('#responseBody').html(JSON.stringify(err.responseJSON, null, 2));
+          });
+      }
+
+      function refresh() {
+        $('#response').show('slow');
+        $('#responseBody').html(`Loading...`);
+        const data = {
+          token: $('#token').val(),
+        };
+        $.ajax({
+          url: 'api/v1/jwts/refresh',
+          type: 'POST',
+          data: JSON.stringify(data),
+          contentType: 'application/json',
+          dataType: 'json',
+        })
+          .done((response) => {
+            console.log('Success!', JSON.stringify(response));
+            $('#responseBody').html(JSON.stringify(response, null, 2));
+            $('#token').val(response.token);
+          })
+          .fail((err) => {
+            console.log('Refresh Failure', JSON.stringify(err));
+            $('#responseBody').html(JSON.stringify(err.responseJSON, null, 2));
+          });
+      }
+
+      function handleResponse(response) {
+        if (response.token) {
+          $('#codeFormGroup').hide('slow', () => {
+            $('#token').val(response.token);
+            $('#tokenFormGroup').show('slow');
+          });
+          return;
+        } else {
+          $('#codeFormGroup').show('slow');
+        }
+      }
+
+      $(document).ready(() => {
+        console.log('Ready!');
+      });
+    </script>
+  </head>
+
+  <body>
+    <div class="container">
+      <form id="jwt">
+        <div class="row">
+          <div class="col-8 offset-2 pt-5">
+            <h1>JWT Token Generator</h1>
+            <p>
+              This form is a helper page to do <code>POST</code> requests to
+              <code>api/v1/jwts</code> on <code>auth-sls-rest-api</code> for JWT Token Generation
+            </p>
+            <hr />
+            <div class="form-group" id="emailFormGroup">
+              <label for="email">Email address</label>
+              <input
+                name="email"
+                type="email"
+                class="form-control"
+                id="email"
+                aria-describedby="emailHelp"
+                placeholder="me@example.com"
+              />
+              <small id="emailHelp" class="form-text text-muted">Enter an email address.</small>
+              <div class="form-group pt-3">
+                <span class="btn btn-primary" onclick="login()">Login</span>
+              </div>
+            </div>
+            <div id="codeFormGroup" class="form-group" style="display: none">
+              <label for="code">Email Verification Code</label>
+              <input
+                type="number"
+                class="form-control"
+                id="code"
+                aria-describedby="codeHelp"
+                placeholder="123456"
+              />
+              <small id="codeHelp" class="form-text text-muted"
+                >Enter the verification sent to your email.</small
+              >
+              <div class="form-group pt-3">
+                <span class="btn btn-primary" onclick="login()">Login</span>
+              </div>
+            </div>
+            <div id="tokenFormGroup" style="display: none">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Bearer</span>
+                </div>
+                <textarea
+                  id="token"
+                  class="form-control"
+                  style="min-height: 125px"
+                  aria-label="Bearer Token"
+                  readonly
+                ></textarea>
+              </div>
+              <div class="form-group pt-3">
+                <span class="btn btn-primary" onclick="refresh()">Refresh</span>
+              </div>
+            </div>
+            <div id="response" class="pt-3" style="display: none">
+              <h2>Backend Response</h2>
+              <div class="alert alert-secondary text-wrap mw-100" role="alert">
+                <pre><code id="responseBody"></code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

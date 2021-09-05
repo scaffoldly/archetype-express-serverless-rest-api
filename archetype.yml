@@ -9,7 +9,7 @@ script:
       repository-name:
         prompt: "Repository Name?"
       auth:
-        prompt: "Auth Service Exists?"
+        prompt: "Auth Dependency?"
         type: bool
         default: false
       persistence:
@@ -22,11 +22,11 @@ script:
 
   - if:
       conditions:
-        - switch-enabled: totp
-        - switch-enabled: aws-ses
+        - switch-enabled: addon-totp
+        - switch-enabled: addon-aws-ses
       then:
         - set:
-            totp:
+            addon_totp:
               value: true
         - set:
             persistence:
@@ -46,6 +46,17 @@ script:
         - render:
             directory:
               source: "addons/totp/base"
+
+  - if:
+      conditions:
+        - switch-enabled: addon-auth
+      then:
+        - set:
+            addon_auth:
+              value: true
+        - render:
+            directory:
+              source: "addons/auth/base"
 
   - if:
       conditions:
@@ -136,8 +147,8 @@ script:
 
   - if:
       conditions:
-        - switch-enabled: totp
-        - switch-enabled: aws-ses
+        - switch-enabled: addon-totp
+        - switch-enabled: addon-aws-ses
       then:
         - exec:
             command: yarn
@@ -146,6 +157,18 @@ script:
               - "lodash"
               - "node-2fa"
               - "@types/notp"
+
+  - if:
+      conditions:
+        - switch-enabled: addon-auth
+      then:
+        - exec:
+            command: yarn
+            args:
+              - "add"
+              - "@types/cookies"
+              - "cookies"
+              - "jose@2.0.5"
 
   - exec:
       command: npx

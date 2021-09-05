@@ -10,7 +10,7 @@ import {
   Query,
   Request,
   Response,
-  Route,{% if auth == true %}
+  Route,{% if auth %}
   Security,{% endif %}
   Tags,
 } from 'tsoa';
@@ -29,7 +29,7 @@ export class {{ Entity }}ControllerV1 extends Controller {
 
   @Post()
   @Response<ErrorResponse>('4XX')
-  @Response<ErrorResponse>('5XX'){% if auth == true %}
+  @Response<ErrorResponse>('5XX'){% if auth %}
   @Security('jwt'){% endif %}
   public create(
     @Body() request: {{ EntityRequest }},
@@ -40,7 +40,7 @@ export class {{ Entity }}ControllerV1 extends Controller {
 
   @Get()
   @Response<ErrorResponse>('4XX')
-  @Response<ErrorResponse>('5XX'){% if auth == true %}
+  @Response<ErrorResponse>('5XX'){% if auth %}
   @Security('jwt'){% endif %}
   public list(
     @Request() httpRequest: HttpRequestWithUser,
@@ -53,7 +53,7 @@ export class {{ Entity }}ControllerV1 extends Controller {
 
   @Get('{{ '{' }}{{ entityId }}{{ '}' }}')
   @Response<ErrorResponse>('4XX')
-  @Response<ErrorResponse>('5XX'){% if auth == true %}
+  @Response<ErrorResponse>('5XX'){% if auth %}
   @Security('jwt'){% endif %}
   public getById(
     @Path('{{ entityId }}') {{ entityId }}: string,
@@ -64,7 +64,7 @@ export class {{ Entity }}ControllerV1 extends Controller {
 
   @Patch('{{ '{' }}{{ entityId }}{{ '}' }}')
   @Response<ErrorResponse>('4XX')
-  @Response<ErrorResponse>('5XX'){% if auth == true %}
+  @Response<ErrorResponse>('5XX'){% if auth %}
   @Security('jwt'){% endif %}
   public updateById(
     @Path('{{ entityId }}') {{ entityId }}: string,
@@ -77,7 +77,7 @@ export class {{ Entity }}ControllerV1 extends Controller {
   @Delete('{{ '{' }}{{ entityId }}{{ '}' }}')
   @Response<null>('204')
   @Response<ErrorResponse>('4XX')
-  @Response<ErrorResponse>('5XX'){% if auth == true %}
+  @Response<ErrorResponse>('5XX'){% if auth %}
   @Security('jwt'){% endif %}
   public deleteById(
     @Path('{{ entityId }}') {{ entityId }}: string,

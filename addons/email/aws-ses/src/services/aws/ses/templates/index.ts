@@ -2,7 +2,7 @@ export const templates: {
   [key: string]: { SubjectPart: string; HtmlPart: string; TextPart: string };
 } = {};
 
-{% if totp %}
+{% if addon_totp %}
 templates.totp = {
   SubjectPart: "{{ '{{Organization}}' }}: Your requested temporary code is {{ '{{OTP}}' }}",
   HtmlPart:
