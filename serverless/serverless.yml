@@ -76,7 +76,6 @@ resources:
   Resources:
     Table:
       Type: AWS::DynamoDB::Table
-      DeletionPolicy: Retain
       Properties:
         TableName: ${opt:stage, "local"}-${self:service}
         KeySchema:
