@@ -1,24 +1,24 @@
 service: ${file(serverless.config.js):serviceName}
 
-frameworkVersion: ^2.2.0
+frameworkVersion: 2.57.0
+useDotenv: true
 
 plugins:
   - serverless-bundle
-  - serverless-dotenv-plugin
-  - serverless-configuration{% if persistence == 'dynamodb' %}
-  - serverless-dynamodb-local{% endif %}
+  - serverless-dynamodb-local
   - serverless-plugin-resource-tagging
   - serverless-offline
 
 provider:
   name: aws
+  lambdaHashingVersion: 20201221
   runtime: nodejs12.x
   cfnRole: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/${self:service}-cloudformation
   stage: ${opt:stage, "local"}
   logRetentionInDays: 1
   apiGateway:
-    restApiId: ${env:AWS_REST_API_ID, ""}
-    restApiRootResourceId: ${env:AWS_REST_API_ROOT_RESOURCE_ID, ""}
+    restApiId: ${env:AWS_REST_API_ID, "0000000000"}
+    restApiRootResourceId: ${env:AWS_REST_API_ROOT_RESOURCE_ID, "0000000000"}
   tracing:
     lambda: true
   environment:
@@ -123,11 +123,6 @@ custom:
       - from: 'public/*'
         to: './'
 
-  serverless-configuration:
-    local:
-      del:
-        - provider.apiGateway.restApiId
-        - provider.apiGateway.restApiRootResourceId
 {% if persistence == 'dynamodb' %}
   dynamodb:
     stages:

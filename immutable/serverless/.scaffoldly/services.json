@@ -1,1 +1,9 @@
-{}
+{
+{% if auth %}  "auth-sls-rest-api": {
+    "api-id": "0000000000",
+    "api-resource-id": "0000000000",
+    "base-url": "http://localhost:3000/auth",
+    "service-name": "auth-sls-rest-api",
+    "service-slug": "auth"
+  }{% endif %}
+}

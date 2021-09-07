@@ -2,6 +2,7 @@ import {
   BaseJwtPayload,
   constructServiceUrl,
   ErrorResponse,
+  extractRequestToken,
   HttpRequest,
   SERVICE_SLUG,
 } from '@scaffoldly/serverless-util';
@@ -14,6 +15,7 @@ import {
   Res,
   Response,
   Route,
+  Security,
   Tags,
   TsoaResponse,
 } from 'tsoa';
@@ -35,8 +37,7 @@ export class JwtControllerV1 extends Controller {
   @Response<ErrorResponse>('5XX')
   public async certs(@Request() httpRequest: HttpRequest): Promise<JwksResponse> {
     const issuer = constructServiceUrl(httpRequest, SERVICE_SLUG, httpRequest.path);
-    const publicKey = await this.jwtService.getPublicKey(issuer);
-    return { keys: [publicKey] };
+    return this.jwtService.getPublicKeys(issuer);
   }
 
   @Post()
@@ -48,6 +49,19 @@ export class JwtControllerV1 extends Controller {
   ): Promise<BaseJwtPayload> {
     const issuer = constructServiceUrl(httpRequest, SERVICE_SLUG, httpRequest.path);
     return this.jwtService.verify(request.token, issuer);
+  }
+
+  @Get('me')
+  @Response<ErrorResponse>('4XX')
+  @Response<ErrorResponse>('5XX')
+  @Security('jwt')
+  public getPayload(@Request() httpRequest: HttpRequest): Promise<BaseJwtPayload> {
+    const issuer = constructServiceUrl(
+      httpRequest,
+      SERVICE_SLUG,
+      httpRequest.path.replace(/(.+)(\/.+)$/gm, '$1'),
+    );
+    return this.jwtService.verify(extractRequestToken(httpRequest), issuer);
   }
 
   @Post('email')

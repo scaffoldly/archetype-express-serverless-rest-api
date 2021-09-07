@@ -13,9 +13,9 @@ import {
 } from '@scaffoldly/serverless-util';
 import moment from 'moment';
 import { ulid } from 'ulid';
-import { JWK, JWKECKey, JWT } from 'jose';
+import { JWK, JWKECKey, JWKS, JWT } from 'jose';
 import Cookies from 'cookies';
-import { JwtResponse, JwtEmailRequest, Jwk } from '../interfaces/jwt';
+import { JwtResponse, JwtEmailRequest, Jwk, JwksResponse } from '../interfaces/jwt';
 import { JwtModel } from '../models/JwtModel';
 import { Jwt } from '../models/interfaces';
 import { TotpService } from './TotpService';
@@ -23,7 +23,8 @@ import { env } from '../env';
 
 export const JWT_EXPIRATION_SECONDS = 3600;
 export const REFRESH_EXPIRATION_MONTHS = 12;
-export const JWKS_SECRET_NAME = 'jwks';
+export const JWKS_PRIMARY_SECRET_NAME = 'jwks-primary';
+export const JWKS_SECONDARY_SECRET_NAME = 'jwks-secondary';
 
 export interface PemJwk {
   pem: string;
@@ -46,9 +47,9 @@ export class JwtService {
     this.totpService = new TotpService();
   }
 
-  getPublicKey = async (issuer: string): Promise<Jwk> => {
-    const keys = await this.getOrCreateKeys(issuer);
-    return keys.publicKey.jwk;
+  getPublicKeys = async (issuer: string): Promise<JwksResponse> => {
+    const jwks = await this.getOrCreateKeys(issuer);
+    return { keys: jwks.map((jwk) => jwk.publicKey.jwk) };
   };
 
   public emailLogin = async (request: JwtEmailRequest, issuer: string): Promise<JwtResponse> => {
@@ -98,10 +99,8 @@ export class JwtService {
         : moment().add(JWT_EXPIRATION_SECONDS, 'second').unix(),
     };
 
-    console.log('!!! temp payload', payload);
-
     const keys = await this.getOrCreateKeys(issuer);
-    const key = JWK.asKey(keys.privateKey.jwk as JWKECKey);
+    const key = JWK.asKey(keys[0].privateKey.jwk as JWKECKey);
 
     const token = JWT.sign(payload, key, {
       header: {
@@ -123,7 +122,7 @@ export class JwtService {
     console.log('Creating refresh cookie for', extractUserId(jwt));
 
     const keys = await this.getOrCreateKeys(jwt.iss);
-    const key = JWK.asKey(keys.privateKey.jwk as JWKECKey);
+    const key = JWK.asKey(keys[1].privateKey.jwk as JWKECKey);
 
     const refreshPayload: Jwt = { ...jwt, exp: jwt.expires, scopes: 'auth:refresh' };
 
@@ -158,9 +157,9 @@ export class JwtService {
     httpRequest: HttpRequest,
   ): Promise<JwtResponse> => {
     const keys = await this.getOrCreateKeys(issuer);
-    const key = JWK.asKey(keys.privateKey.jwk as JWKECKey);
+    const jwks = new JWKS.KeyStore(keys.map((key) => JWK.asKey(key.privateKey.jwk as JWKECKey)));
 
-    const verifiedJwt = JWT.verify(token, key, {
+    const verifiedJwt = JWT.verify(token, jwks, {
       ignoreExp: true,
       issuer,
       audience: generateAudience(env['stage-domain'], 'auth'),
@@ -191,7 +190,7 @@ export class JwtService {
         return acc;
       }
 
-      const verified = JWT.verify(value, key, {
+      const verified = JWT.verify(value, jwks, {
         audience: jwt.attrs.aud,
         issuer: jwt.attrs.iss,
         jti: jwt.attrs.jti,
@@ -229,9 +228,9 @@ export class JwtService {
     console.log('Verifying token', decoded);
 
     const keys = await this.getOrCreateKeys(issuer);
-    const key = JWK.asKey(keys.privateKey.jwk as JWKECKey);
+    const jwks = new JWKS.KeyStore(keys.map((key) => JWK.asKey(key.privateKey.jwk as JWKECKey)));
 
-    const verified = JWT.verify(token, key, {
+    const verified = JWT.verify(token, jwks, {
       audience: generateAudience(env['stage-domain'], 'auth'),
       issuer,
     }) as Jwt;
@@ -251,20 +250,33 @@ export class JwtService {
     return verified;
   };
 
-  private getOrCreateKeys = async (issuer: string): Promise<GeneratedKeys> => {
-    let keys = await GetSecret(JWKS_SECRET_NAME);
+  private getOrCreateKeys = async (issuer: string): Promise<GeneratedKeys[]> => {
+    let primary = await GetSecret(JWKS_PRIMARY_SECRET_NAME);
+    let secondary = await GetSecret(JWKS_SECONDARY_SECRET_NAME);
 
-    if (!keys) {
+    if (!primary) {
       const generatedKeys = this.generateKeys(issuer);
 
-      await SetSecret(JWKS_SECRET_NAME, JSON.stringify(generatedKeys), true);
-      keys = await GetSecret(JWKS_SECRET_NAME);
-      if (!keys) {
+      await SetSecret(JWKS_PRIMARY_SECRET_NAME, JSON.stringify(generatedKeys), true);
+      primary = await GetSecret(JWKS_PRIMARY_SECRET_NAME);
+      if (!primary) {
+        throw new Error('Unknown issue generating/storing JWKS');
+      }
+    }
+    if (!secondary) {
+      const generatedKeys = this.generateKeys(issuer);
+
+      await SetSecret(JWKS_SECONDARY_SECRET_NAME, JSON.stringify(generatedKeys), true);
+      secondary = await GetSecret(JWKS_SECONDARY_SECRET_NAME);
+      if (!secondary) {
         throw new Error('Unknown issue generating/storing JWKS');
       }
     }
 
-    return JSON.parse(Buffer.from(keys, 'base64').toString('utf8'));
+    const primaryKey = JSON.parse(Buffer.from(primary, 'base64').toString('utf8'));
+    const secondaryKey = JSON.parse(Buffer.from(secondary, 'base64').toString('utf8'));
+
+    return [primaryKey, secondaryKey];
   };
 
   private generateKeys = (issuer: string): GeneratedKeys => {
