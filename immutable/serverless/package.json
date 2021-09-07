@@ -9,7 +9,7 @@
     "deploy": "SLS_DEBUG=* serverless deploy",
     "serverless": "SLS_DEBUG=* serverless",
     "dotenv": "dotenv-out -f typescript -e .env -e .scaffoldly/.env -c $NODE_ENV -o src",
-    "openapi": "openapi-generator -g axios -i .scaffoldly/$NODE_ENV -o src/services/openapi{% if auth %} -r auth{% endif %}",
+    "openapi": "openapi-generator -g axios -i .scaffoldly/$NODE_ENV -o src/services/openapi{% if auth %} -r auth-sls-rest-api{% endif %}",
     "types": "ts-node types.ts",
     "tsoa": "node tsoa.js",
     "dynamodb": "serverless dynamodb install",
