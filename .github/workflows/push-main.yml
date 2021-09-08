@@ -30,6 +30,7 @@ jobs:
           destination: "${{ runner.temp }}/rendered"
           options: "${{ matrix.archetect-options }}"
           commit: "false"
+      - run: yarn
   prerelease:
     needs: render
     runs-on: ubuntu-latest

@@ -168,5 +168,3 @@ script:
         - "--write"
         - '*/**/*.{js,ts,tsx}'
 
-  - exec:
-      command: yarn
