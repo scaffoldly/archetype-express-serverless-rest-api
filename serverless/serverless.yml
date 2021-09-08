@@ -1,18 +1,22 @@
 service: ${file(serverless.config.js):serviceName}
 
 frameworkVersion: 2.57.0
-useDotenv: true
+variablesResolutionMode: "20210326"
+configValidationMode: off
+disabledDeprecations:
+  - "*"
 
 plugins:
   - serverless-bundle
+  - serverless-dotenv-plugin
   - serverless-dynamodb-local
   - serverless-plugin-resource-tagging
   - serverless-offline
 
 provider:
   name: aws
-  lambdaHashingVersion: 20201221
   runtime: nodejs12.x
+  lambdaHashingVersion: "20201221"
   cfnRole: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/${self:service}-cloudformation
   stage: ${opt:stage, "local"}
   logRetentionInDays: 1
@@ -22,9 +26,9 @@ provider:
   tracing:
     lambda: true
   environment:
-    STAGE_DOMAIN: ${env:stage-domain, "localhost"}
-    API_GATEWAY_DOMAIN: ${env:api-gateway-domain, "localhost"}
-    SERVICE_NAME: ${self:service}
+    API_GATEWAY_DOMAIN: ${file(serverless.config.js):apiGatewayDomain}
+    STAGE_DOMAIN: ${file(serverless.config.js):stageDomain}
+    SERVICE_NAME: ${file(serverless.config.js):serviceName}
     SERVICE_SLUG: ${file(serverless.config.js):serviceSlug}
     STAGE: ${opt:stage, "local"}
   stackTags:
@@ -71,9 +75,15 @@ functions:
   #   events:
   #     - sns: ${opt:stage, "local"}-${self:service}
 
-{% if persistence == 'dynamodb' %}
 resources:
   Resources:
+    Secret:
+      Type: AWS::SecretsManager::Secret
+      Properties: 
+        Name: lambda/${opt:stage, "local"}/${self:service}
+        SecretString: 
+          "{}"
+{% if persistence == 'dynamodb' %}
     Table:
       Type: AWS::DynamoDB::Table
       Properties:

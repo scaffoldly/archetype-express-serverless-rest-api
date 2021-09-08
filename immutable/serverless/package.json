@@ -23,7 +23,7 @@
     "@typescript-eslint/parser": "^4.17.0",
     "babel-eslint": "^10.1.0",
     "cross-env": "^7.0.3",
-    "dotenv-out": "^1.0.4",
+    "dotenv-out": "^1.0.6",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.1.0",
     "eslint-config-airbnb-typescript": "^12.3.1",
@@ -35,6 +35,7 @@
     "prettier": "^2.3.0",
     "serverless": "^2.57.0",
     "serverless-bundle": "^4.4.0",
+    "serverless-dotenv-plugin": "^3.9.0",
     "serverless-dynamodb-local": "^0.2.40",
     "serverless-offline": "^8.1.0",
     "serverless-plugin-resource-tagging": "^1.1.1",
@@ -42,7 +43,7 @@
     "typescript": "^4.2.3"
   },
   "dependencies": {
-    "@scaffoldly/serverless-util": "^4.0.1",
+    "@scaffoldly/serverless-util": "^4.0.2",
     "@types/aws-lambda": "^8.10.77",
     "@vendia/serverless-express": "^4.3.7",
     "axios": "^0.21.1",
