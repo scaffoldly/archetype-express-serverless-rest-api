@@ -43,7 +43,7 @@
     "typescript": "^4.2.3"
   },
   "dependencies": {
-    "@scaffoldly/serverless-util": "^4.0.2",
+    "@scaffoldly/serverless-util": "^4.0.3",
     "@types/aws-lambda": "^8.10.77",
     "@vendia/serverless-express": "^4.3.7",
     "axios": "^0.21.1",

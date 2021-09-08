@@ -153,11 +153,11 @@ script:
             command: yarn
             args:
               - "add"
-              - "lodash"
-              - "node-2fa"
-              - "@types/notp"
-              - "@types/cookies"
-              - "cookies"
+              - "lodash@4.17.21"
+              - "node-2fa@2.0.2"
+              - "@types/notp@2.0.1"
+              - "@types/cookies@0.7.7"
+              - "cookies@0.8.0"
               - "jose@2.0.5"
 
   - exec:
