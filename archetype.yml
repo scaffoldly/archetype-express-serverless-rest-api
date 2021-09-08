@@ -170,5 +170,3 @@ script:
 
   - exec:
       command: yarn
-      args:
-        - "prepare"
