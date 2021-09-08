@@ -153,6 +153,7 @@ script:
             command: yarn
             args:
               - "add"
+              - "--ignore-scripts"
               - "lodash@4.17.21"
               - "node-2fa@2.0.2"
               - "@types/notp@2.0.1"
@@ -166,3 +167,8 @@ script:
         - "prettier"
         - "--write"
         - '*/**/*.{js,ts,tsx}'
+
+  - exec:
+      command: yarn
+      args:
+        - "prepare"

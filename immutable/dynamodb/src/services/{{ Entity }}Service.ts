@@ -120,7 +120,16 @@ export class {{ EntityService }} {
     {{ entityRequest }}: {{ EntityRequest }},
     user: BaseJwtPayload,
   ): Promise<{{ EntityResponse }}> => {
-    const {{ entity }} = await this.{{ entityModel }}.model.update({
+    let {{ entity }} = await this.{{ entityModel }}.model.get(
+      {{ EntityModel }}.prefix('pk', extractUserId(user, '__ANONYMOUS__')),
+      {{ EntityModel }}.prefix('sk', {{ entityId }}),
+    );
+
+    if (!{{ entity }} || {{ entity }}.attrs.expires) {
+      throw new HttpError(404, 'Not Found');
+    }
+
+    {{ entity }} = await this.{{ entityModel }}.model.update({
       pk: {{ EntityModel }}.prefix('pk', extractUserId(user, '__ANONYMOUS__')),
       sk: {{ EntityModel }}.prefix('sk', {{ entityId }}),
       ...{{ entityRequest }},
@@ -139,8 +148,17 @@ export class {{ EntityService }} {
     async = false,
   ): Promise<{{ EntityResponse }} | null> => {
     if (async) {
+      let {{ entity }} = await this.{{ entityModel }}.model.get(
+        {{ EntityModel }}.prefix('pk', extractUserId(user, '__ANONYMOUS__')),
+        {{ EntityModel }}.prefix('sk', {{ entityId }}),
+      );
+  
+      if (!{{ entity }} || {{ entity }}.attrs.expires) {
+        throw new HttpError(404, 'Not Found');
+      }
+
       // Set expires on row for DynamoDB expiration
-      const {{ entity }} = await this.{{ entityModel }}.model.update({
+      {{ entity }} = await this.{{ entityModel }}.model.update({
         pk: {{ EntityModel }}.prefix('pk', extractUserId(user, '__ANONYMOUS__')),
         sk: {{ EntityModel }}.prefix('sk', {{ entityId }}),
         expires: moment().unix(),
