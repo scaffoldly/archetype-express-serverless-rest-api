@@ -30,15 +30,15 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: ./node_modules
-          key: {{ "${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}" }}
+          key: {{ "${{ runner.os }}-yarn-${{ hashFiles('./yarn.lock') }}" }}
           restore-keys: |
             {{ '${{ runner.os }}-yarn-' }}
       - uses: actions/cache@v2
         with:
           path: ./src/services/openapi
-          key: {{ '${{ runner.os }}-openapi' }}
+          key: {{ "${{ runner.os }}-openapi-${{ hashFiles('./src/services/openapi/versions.json') }}" }}
           restore-keys: |
-            {{ "${{ runner.os }}-openapi-${{ hashFiles('./src/services/openapi/versions.json') }}" }}
+            {{ '${{ runner.os }}-openapi-' }}
       - run: yarn
       - uses: scaffoldly/bump-version-action@v1
         with:
