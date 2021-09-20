@@ -36,7 +36,7 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: ./src/services/openapi
-          key: {{ "${{ runner.os }}-openapi-${{ hashFiles('./src/services/openapi/versions.json') }}" }}
+          key: {{ "${{ runner.os }}-openapi-${{ hashFiles('./.openapis') }}" }}
           restore-keys: |
             {{ '${{ runner.os }}-openapi-' }}
       - run: yarn
