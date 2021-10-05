@@ -1,10 +1,4 @@
-// import {
-//   dynamoDBStreamEventRequestMapper,
-//   dynamoDBStreamEventResponseMapper,
-//   snsEventRequestMapper,
-//   snsEventResponseMapper,
-// } from '@scaffoldly/serverless-util';
-import { configure } from '@vendia/serverless-express';
+import { configure } from '@scaffoldly/serverless-express';
 import app from './app';
 
 // import { AWS } from '@scaffoldly/serverless-util';
@@ -12,18 +6,9 @@ import app from './app';
 
 exports.handler = configure({
   app,
+  eventSourceRoutes: {
+{% if persistence == 'dynamodb' %}
+    AWS_DYNAMODB: '/events/dynamodb',
+{% endif %}
+  },
 });
-// exports.dynamoDbEventHandler = configure({
-//   app,
-//   eventSource: {
-//     getRequest: dynamoDBStreamEventRequestMapper('/event/dynamodb'),
-//     getResponse: dynamoDBStreamEventResponseMapper(),
-//   },
-// });
-// exports.snsEventHandler = configure({
-//   app,
-//   eventSource: {
-//     getRequest: snsEventRequestMapper('/event/sns'),
-//     getResponse: snsEventResponseMapper(),
-//   },
-// });

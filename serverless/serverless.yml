@@ -10,6 +10,7 @@ plugins:
   - serverless-bundle
   - serverless-dotenv-plugin
   - serverless-dynamodb-local
+  - serverless-offline-dynamodb-streams
   - serverless-plugin-resource-tagging
   - serverless-offline
 
@@ -54,26 +55,14 @@ functions:
       - http:
           path: /{proxy+}
           method: options
-
 {% if persistence == 'dynamodb' %}
-  # dynamodb-event-handler:
-  #   role: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/${self:service}-${opt:stage, "local"}
-  #   handler: src/lambda.dynamoDbEventHandler
-  #   timeout: 30
-  #   events:
-  #     - stream:
-  #         type: dynamodb
-  #         batchSize: 1
-  #         arn:
-  #           Fn::GetAtt: [Table, StreamArn]
+      - stream:
+          type: dynamodb
+          batchSize: 1
+          maximumRecordAgeInSeconds: 600
+          arn:
+            Fn::GetAtt: [Table, StreamArn]
 {% endif %}
-
-  # sns-event-handler:
-  #   role: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/${self:service}-${opt:stage, "local"}
-  #   handler: src/lambda.snsEventHandler
-  #   timeout: 30
-  #   events:
-  #     - sns: ${opt:stage, "local"}-${self:service}
 
 resources:
   Resources:
@@ -141,4 +130,6 @@ custom:
       port: 8100
       dbPath: .dynamodb
       migrate: true
+  serverless-offline-dynamodb-streams:
+    endpoint: http://0.0.0.0:8100
 {% endif %}

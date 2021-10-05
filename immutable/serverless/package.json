@@ -38,13 +38,14 @@
     "serverless-dotenv-plugin": "^3.9.0",
     "serverless-dynamodb-local": "^0.2.40",
     "serverless-offline": "^8.1.0",
+    "serverless-offline-dynamodb-streams": "^5.0.0",
     "serverless-plugin-resource-tagging": "^1.1.1",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.3"
   },
   "dependencies": {
-    "@scaffoldly/serverless-express": "^4.4.1",
-    "@scaffoldly/serverless-util": "^4.0.3",
+    "@scaffoldly/serverless-express": "^4.4.2",
+    "@scaffoldly/serverless-util": "^4.0.7",
     "@types/aws-lambda": "^8.10.77",
     "axios": "^0.21.1",
     "express": "^4.17.1",

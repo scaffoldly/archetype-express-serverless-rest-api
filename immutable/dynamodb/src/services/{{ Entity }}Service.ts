@@ -174,19 +174,23 @@ export class {{ EntityService }} {
     return null;
   };
 
-  public handleAdd = async ({{ entity }}: {{ Entity }}): Promise<void> => {
+  public handleAdd = async ({{ entity }}: {{ Entity }}): Promise<{{ Entity }}> => {
     console.log('Added', JSON.stringify({{ entity }}));
     // Here you can do any async handling of new entities
+    return {{ entity }};
   };
 
-  public handleModify = async (new{{ Entity }}: {{ Entity }}, prev{{ Entity }}: {{ Entity }}): Promise<void> => {
+  public handleModify = async (new{{ Entity }}: {{ Entity }}, prev{{ Entity }}: {{ Entity }}): Promise<{{ Entity }}> => {
     console.log('Modified:', JSON.stringify(new{{ Entity }}));
     console.log('Previous:', JSON.stringify(prev{{ Entity }}));
     // Here you can do any async handling of updated entities
+
+    return new{{ Entity }};
   };
 
-  public handleRemove = async ({{ entity }}: {{ Entity }}): Promise<void> => {
+  public handleRemove = async ({{ entity }}: {{ Entity }}): Promise<{{ Entity }}> => {
     console.log('Removed', JSON.stringify({{ entity }}));
     // Here you can do any async handling of removed entities
+    return {{ entity }};
   };
 }

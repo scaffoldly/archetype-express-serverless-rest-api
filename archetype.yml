@@ -141,6 +141,9 @@ script:
                 - render:
                     directory:
                       source: "immutable/dynamodb"
+        - render:
+            directory:
+              source: "addons/events/dynamodb"
 
 
   - if:

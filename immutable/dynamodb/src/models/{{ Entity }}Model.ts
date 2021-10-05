@@ -1,4 +1,12 @@
-import { Joi, Model, SERVICE_NAME, STAGE, Table } from '@scaffoldly/serverless-util';
+import {
+  Joi,
+  Model,
+  SERVICE_NAME,
+  STAGE,
+  Table,
+  unmarshallDynamoDBImage,
+} from '@scaffoldly/serverless-util';
+import { StreamRecord } from 'aws-lambda';
 import { {{ Entity }} } from './interfaces';
 import { {{ entity }} } from './schemas/{{ Entity }}';
 
@@ -26,12 +34,18 @@ export class {{ EntityModel }} {
   };
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  static {{ isEntity }} = (obj: any): boolean => {
-    if (!obj || !obj.pk || !obj.sk || typeof obj.pk !== 'string' || typeof obj.sk !== 'string') {
+  static {{ isEntity }} = (record: StreamRecord): boolean => {
+    if (!record) {
       return false;
     }
 
-    const { pk, sk } = obj as { pk: string; sk: string };
+    const check = unmarshallDynamoDBImage(record.Keys) as { pk: string; sk: string };
+
+    if (!check.pk || !check.sk || typeof check.pk !== 'string' || typeof check.sk !== 'string') {
+      return false;
+    }
+
+    const { pk, sk } = check;
 
     try {
       Joi.assert(pk, {{ entity }}.pk);
