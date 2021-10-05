@@ -32,6 +32,7 @@ export class DynamoDBEventController extends Controller {
     let handled;
 
     {% for entity in entities %}
+    // eslint-disable-next-line prefer-const
     handled = await handleDynamoDBStreamRecord(record, {
       canHandle: {{entity | pascal_case }}Model.is{{ entity | pascal_case }},
       onInsert: this.{{ entity }}Service.handleAdd,
