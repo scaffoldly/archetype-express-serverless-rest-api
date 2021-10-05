@@ -1,13 +1,13 @@
-// import { HttpError, TypedDynamoDBStreamEvent } from '@scaffoldly/serverless-util';
 import { handleDynamoDBStreamRecord, HttpError } from '@scaffoldly/serverless-util';
 import { DynamoDBStreamEvent } from 'aws-lambda';
-import { Body, Controller, Header, Post, Route, Tags } from 'tsoa';
+import { Body, Controller, Header, Hidden, Post, Route, Tags } from 'tsoa';
 {% for entity in entities %}import { {{ entity | pascal_case }}Model } from '../models/{{ entity | pascal_case }}Model';{% endfor %}
 import { {% for entity in entities %}{{ entity | pascal_case }},{% endfor %} } from '../models/interfaces';
 {% for entity in entities %}import { {{ entity | pascal_case }}Service } from '../services/{{ entity | pascal_case }}Service';{% endfor %}
 
 @Route('/events/dynamodb')
 @Tags('DynamoDB Events')
+@Hidden()
 export class DynamoDBEventController extends Controller {
   {% for entity in entities %}
   {{ entity }}Service: {{ entity | pascal_case }}Service;
