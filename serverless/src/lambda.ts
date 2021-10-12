@@ -1,4 +1,4 @@
-import { configure } from '@scaffoldly/serverless-express';
+import { configure } from '@vendia/serverless-express';
 import app from './app';
 
 // import { AWS } from '@scaffoldly/serverless-util';
