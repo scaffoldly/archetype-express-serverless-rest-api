@@ -98,6 +98,10 @@
       }
 
       $(document).ready(() => {
+        const url = new URL(window.location.href);
+        if (url.searchParams.get('email')) {
+          $('#email').val(url.searchParams.get('email'));
+        }
         console.log('Ready!');
       });
     </script>
