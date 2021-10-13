@@ -19,7 +19,7 @@ import {
   Tags,
   TsoaResponse,
 } from 'tsoa';
-import { JwtResponse, JwtEmailRequest, JwksResponse, TokenRequest } from '../interfaces/jwt';
+import { JwtResponse, JwksResponse, TokenRequest } from '../interfaces/jwt';
 import { JwtService } from '../services/JwtService';
 
 @Route('/api/v1/jwts')
