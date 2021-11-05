@@ -18,7 +18,7 @@ async function types(): Promise<void> {
 (async () => {
   try {
     await types();
-  } catch (e) {
+  } catch (e: any) {
     console.warn('Error generating types', e.message);
   }
 })();
