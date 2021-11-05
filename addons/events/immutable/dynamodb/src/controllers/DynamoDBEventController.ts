@@ -21,7 +21,7 @@ export class DynamoDBEventController extends Controller {
   }
 
   @Post()
-  public async event(@Header('Host') host: string, @Body() event: unknown): Promise<{% for entity in entities %}{{ entity | pascal_case }}{% if not loop.last %} | {% endif %}{% endfor %}> {
+  public async event(@Header('Host') host: string, @Body() event: unknown): Promise<{% for entity in entities %}{{ entity | pascal_case }}{% if not loop.last %} | {% endif %}{% endfor %} | null> {
     if (host !== 'dynamodb.amazonaws.com') {
       throw new HttpError(403, 'Forbidden');
     }
@@ -45,5 +45,7 @@ export class DynamoDBEventController extends Controller {
     {% endfor %}
 
     console.warn('Unhandled stream record', record.dynamodb && record.dynamodb.Keys);
+
+    return null;
   }
 }
