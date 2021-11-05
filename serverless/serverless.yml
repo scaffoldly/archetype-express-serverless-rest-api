@@ -9,14 +9,14 @@ disabledDeprecations:
 plugins:
   - serverless-bundle
   - serverless-dotenv-plugin
-  - serverless-dynamodb-local
-  - serverless-offline-dynamodb-streams
+  - serverless-dynamodb-local{% if ddb_stream_events %}
+  - serverless-offline-dynamodb-streams{% endif %}
   - serverless-plugin-resource-tagging
   - serverless-offline
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs14.x
   lambdaHashingVersion: "20201221"
   cfnRole: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/${self:service}-cloudformation
   stage: ${opt:stage, "local"}
@@ -55,7 +55,7 @@ functions:
       - http:
           path: /{proxy+}
           method: options
-{% if persistence == 'dynamodb' %}
+{% if persistence == 'dynamodb' and ddb_stream_events %}
       - stream:
           type: dynamodb
           batchSize: 1

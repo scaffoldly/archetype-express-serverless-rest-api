@@ -1,6 +1,10 @@
 {
   "stage-domain": "localhost",
   "api-gateway-domain": "localhost",
+  {% if addon_email %}
+  "mail-domain": "localhost",
+  "noreply-address": "noreply@localhost",
+  {% endif %}
   "service-name": "{{ repository-name }}",
   "service-slug": "{{ service-name }}",
   "application-name": "{{ service-name }}",

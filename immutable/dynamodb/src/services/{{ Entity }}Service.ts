@@ -174,23 +174,25 @@ export class {{ EntityService }} {
     return null;
   };
 
-  public handleAdd = async ({{ entity }}: {{ Entity }}): Promise<{{ Entity }}> => {
+  public handleAdd = async ({{ entity }}: {{ Entity }}): Promise<{{ Entity }} | null> => {
     console.log('Added', JSON.stringify({{ entity }}));
     // Here you can do any async handling of new entities
+    // Optionally, return null if you want the event to continue propagation to additional handlers in the controller
     return {{ entity }};
   };
 
-  public handleModify = async (new{{ Entity }}: {{ Entity }}, prev{{ Entity }}: {{ Entity }}): Promise<{{ Entity }}> => {
+  public handleModify = async (new{{ Entity }}: {{ Entity }}, prev{{ Entity }}: {{ Entity }}): Promise<{{ Entity }} | null> => {
     console.log('Modified:', JSON.stringify(new{{ Entity }}));
     console.log('Previous:', JSON.stringify(prev{{ Entity }}));
     // Here you can do any async handling of updated entities
-
+    // Optionally, return null if you want the event to continue propagation to additional handlers in the controller
     return new{{ Entity }};
   };
 
-  public handleRemove = async ({{ entity }}: {{ Entity }}): Promise<{{ Entity }}> => {
+  public handleRemove = async ({{ entity }}: {{ Entity }}): Promise<{{ Entity }} | null> => {
     console.log('Removed', JSON.stringify({{ entity }}));
     // Here you can do any async handling of removed entities
+    // Optionally, return null if you want the event to continue propagation to additional handlers in the controller
     return {{ entity }};
   };
 }

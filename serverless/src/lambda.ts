@@ -7,8 +7,9 @@ import app from './app';
 exports.handler = configure({
   app,
   eventSourceRoutes: {
-{% if persistence == 'dynamodb' %}
+{% if persistence == 'dynamodb' and ddb_stream_events %}
     AWS_DYNAMODB: '/events/dynamodb',
 {% endif %}
   },
 });
+  

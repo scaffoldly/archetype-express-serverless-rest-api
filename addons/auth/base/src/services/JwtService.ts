@@ -15,10 +15,9 @@ import moment from 'moment';
 import { ulid } from 'ulid';
 import { JWK, JWKECKey, JWKS, JWT } from 'jose';
 import Cookies from 'cookies';
-import { JwtResponse, JwtEmailRequest, Jwk, JwksResponse } from '../interfaces/jwt';
+import { JwtResponse, Jwk, JwksResponse } from '../interfaces/jwt';
 import { JwtModel } from '../models/JwtModel';
 import { Jwt } from '../models/interfaces';
-import { TotpService } from './TotpService';
 import { env } from '../env';
 
 export const JWT_EXPIRATION_SECONDS = 3600;
@@ -40,11 +39,8 @@ export interface GeneratedKeys {
 export class JwtService {
   jwtModel: JwtModel;
 
-  totpService: TotpService;
-
   constructor() {
     this.jwtModel = new JwtModel();
-    this.totpService = new TotpService();
   }
 
   getPublicKeys = async (issuer: string): Promise<JwksResponse> => {
@@ -52,28 +48,7 @@ export class JwtService {
     return { keys: jwks.map((jwk) => jwk.publicKey.jwk) };
   };
 
-  public emailLogin = async (request: JwtEmailRequest, issuer: string): Promise<JwtResponse> => {
-    console.log('Email login request', request);
-
-    const totp = request.code
-      ? await this.totpService.verify({ id: request.email, token: request.code })
-      : await this.totpService.sendEmail({ email: request.email });
-
-    if (!totp.verified && !request.code) {
-      console.log('Verification required or missing code');
-      return {
-        verificationSentTo: totp.id,
-      };
-    }
-
-    if (!totp.verified && request.code) {
-      throw new HttpError(401, 'Unauthorized');
-    }
-
-    return this.createJwt(totp.id, issuer, request.remember);
-  };
-
-  private createJwt = async (
+  public createJwt = async (
     userId: string,
     issuer: string,
     remember = true,

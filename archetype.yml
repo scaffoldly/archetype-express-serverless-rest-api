@@ -29,13 +29,16 @@ script:
         - set:
             addon_totp:
               value: true
+            addon_email:
+              value: true
             addon_auth:
               value: true
             auth:
               value: true
-        - set:
             persistence:
               value: "dynamodb"
+            db_stream_events:
+              value: false
         - render:
             directory:
               source: "addons/email/base"
@@ -82,29 +85,26 @@ script:
 
   - if:
       conditions:
+        - switch-enabled: overwrite
         - switch-enabled: serverless
       then:
-        - scope:
-            - rules:
-                - destination:
-                    overwrite: false
-            - render:
-                directory:
-                  source: "immutable/serverless"
+        - render:
+            directory:
+              source: "immutable/serverless"
 
   - if:
       conditions:
+        - switch-enabled: overwrite
         - switch-enabled: entity
         - is-true: "{{ persistence == 'dynamodb' }}"
       then:
         - set:
+            db_stream_events:
+              value: true
             entities:
               prompt: "Entities?"
               default: ""
               type: list
-        - rules:
-            - destination:
-                overwrite: false
         - for:
             item:
               in: entities
@@ -143,7 +143,7 @@ script:
                       source: "immutable/dynamodb"
         - render:
             directory:
-              source: "addons/events/dynamodb"
+              source: "addons/events/immutable/dynamodb"
 
 
   - if:

@@ -30,6 +30,10 @@
       integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
       crossorigin="anonymous"
     ></script>
+    <script
+      src="https://use.fontawesome.com/releases/v5.15.4/js/all.js"
+      data-auto-a11y="true"
+    ></script>
 
     <script>
       function login() {
@@ -89,12 +93,19 @@
         if (response.token) {
           $('#codeFormGroup').hide('slow', () => {
             $('#token').val(response.token);
+            $('#verifyButton').attr('href', `https://jwt.scaffold.ly/#jwt=${response.token}`);
             $('#tokenFormGroup').show('slow');
           });
           return;
         } else {
           $('#codeFormGroup').show('slow');
         }
+      }
+
+      function copyToken() {
+        navigator.clipboard.writeText($('#token').val()).then(() => {
+          console.log('Copied token!');
+        });
       }
 
       $(document).ready(() => {
@@ -148,6 +159,10 @@
               <div class="form-group pt-3">
                 <span class="btn btn-primary" onclick="login()">Login</span>
               </div>
+              <small
+                >Note: The verification code can also be found in the
+                <code>auth-sls-rest-api</code> logs.</small
+              >
             </div>
             <div id="tokenFormGroup" style="display: none">
               <div class="input-group">
@@ -161,13 +176,26 @@
                   aria-label="Bearer Token"
                   readonly
                 ></textarea>
+                <div class="input-group-append">
+                  <button class="btn btn-light btn-sm" type="button" onclick="copyToken()">
+                    <i class="fas fa-copy"></i>
+                  </button>
+                </div>
               </div>
               <div class="form-group pt-3">
-                <span class="btn btn-primary" onclick="refresh()">Refresh</span>
+                <div class="d-flex flex-row justify-content-between align-items-center">
+                  <span class="btn btn-primary" onclick="refresh()">Refresh</span>
+                  <a id="verifyButton" href="#" class="btn btn-primary" target="_blank">Verify</a>
+                </div>
               </div>
             </div>
             <div id="response" class="pt-3" style="display: none">
-              <h2>Backend Response</h2>
+              <div class="d-flex flex-row justify-content-start align-items-center pb-2">
+                <a href="jwt.html" class="btn btn-dark btn-sm mr-2"
+                  ><i class="fas fa-arrow-left"></i
+                ></a>
+                <h2 class="m-0 p-0">Backend Response</h2>
+              </div>
               <div class="alert alert-secondary text-wrap mw-100" role="alert">
                 <pre><code id="responseBody"></code></pre>
               </div>

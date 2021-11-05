@@ -20,7 +20,7 @@ export class TotpService {
 
   constructor() {
     this.totpSecretModel = new TotpSecretModel();
-    this.emailService = new SesService(`slyses.${env['stage-domain']}`);
+    this.emailService = new SesService(env['organization-name'], env['noreply-address']);
     this.encryptionService = new KmsService();
   }
 

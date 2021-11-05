@@ -1,22 +1,21 @@
 import { SERVICE_NAME, SES, STAGE } from '@scaffoldly/serverless-util';
 import _ from 'lodash';
-import { env } from '../../../env';
 import { EmailSendResult, EmailService } from '../../interfaces/EmailService';
 import { templates } from './templates';
 
 export class SesService implements EmailService {
-  constructor(private domain: string) {}
+  constructor(private fromName: string, private fromEmail: string) {}
 
   async sendTotp(email: string, token: string): Promise<EmailSendResult> {
     const ses = await SES();
 
     const result = await ses
       .sendTemplatedEmail({
-        Source: `${env['organization-name']} <no-reply@${this.domain}>`,
+        Source: `${this.fromName} <${this.fromEmail}>`,
         Destination: { ToAddresses: [email] },
         Template: await this.fetchTemplate('totp'),
         TemplateData: JSON.stringify({
-          Organization: env['organization-name'],
+          Organization: this.fromName,
           OTP: token,
         }),
       })

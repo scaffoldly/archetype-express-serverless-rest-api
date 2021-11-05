@@ -44,6 +44,6 @@ export class DynamoDBEventController extends Controller {
     }
     {% endfor %}
 
-    throw new Error(`Unhandled stream record`);
+    console.warn('Unhandled stream record', record.dynamodb && record.dynamodb.Keys);
   }
 }

@@ -4,16 +4,13 @@ export type TokenRequest = {
   token: string;
 };
 
-export type JwtEmailRequest = {
-  email: string;
-  code?: string;
+export interface JwtRequest {
   remember?: boolean;
-};
+}
 
 export type JwtResponse = {
   token?: string;
   payload?: Jwt;
-  verificationSentTo?: string;
 };
 
 export interface Jwk {
