@@ -85,9 +85,11 @@ script:
 
   - if:
       conditions:
-        - switch-enabled: overwrite
         - switch-enabled: serverless
       then:
+        - rules:
+            - destination:
+                overwrite: false
         - render:
             directory:
               source: "immutable/serverless"
