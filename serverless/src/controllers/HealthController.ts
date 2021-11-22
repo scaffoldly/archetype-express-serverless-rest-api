@@ -15,7 +15,7 @@ export class HealthController extends Controller {
   public async get(): Promise<HealthResponse> {
     return {
       name: packageJson.name,
-      healty: true,
+      healthy: true,
       now: new Date(),
       version: packageJson.version,
     };
