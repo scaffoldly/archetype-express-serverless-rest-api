@@ -3,7 +3,7 @@ import packageJson from '../../package.json';
 
 export type HealthResponse = {
   name: string;
-  healty: boolean;
+  healthy: boolean;
   now: Date;
   version: string;
 };
