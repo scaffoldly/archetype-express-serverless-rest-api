@@ -1,7 +1,7 @@
-service: ${file(serverless.config.js):serviceName}
+service: ${file(serverless.config.js):service-name}
 
 frameworkVersion: 2.57.0
-variablesResolutionMode: "20210326"
+variablesResolutionMode: '20210326'
 configValidationMode: off
 disabledDeprecations:
   - "*"
@@ -17,7 +17,7 @@ plugins:
 provider:
   name: aws
   runtime: nodejs14.x
-  lambdaHashingVersion: "20201221"
+  lambdaHashingVersion: '20201221'
   cfnRole: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/${self:service}-cloudformation
   stage: ${opt:stage, "local"}
   logRetentionInDays: 1
@@ -27,14 +27,14 @@ provider:
   tracing:
     lambda: true
   environment:
-    API_GATEWAY_DOMAIN: ${file(serverless.config.js):apiGatewayDomain}
-    STAGE_DOMAIN: ${file(serverless.config.js):stageDomain}
-    SERVICE_NAME: ${file(serverless.config.js):serviceName}
-    SERVICE_SLUG: ${file(serverless.config.js):serviceSlug}
+    API_GATEWAY_DOMAIN: ${file(serverless.config.js):api-gateway-domain}
+    STAGE_DOMAIN: ${file(serverless.config.js):stage-domain}
+    SERVICE_NAME: ${self:service}
+    SERVICE_SLUG: ${file(serverless.config.js):service-slug}
     STAGE: ${opt:stage, "local"}
   stackTags:
     ServiceName: ${self:service}
-    ServiceSlug: ${file(serverless.config.js):serviceSlug}
+    ServiceSlug: ${file(serverless.config.js):service-slug}
     ServiceStage: ${opt:stage, "local"}
 
 functions:
@@ -68,10 +68,9 @@ resources:
   Resources:
     Secret:
       Type: AWS::SecretsManager::Secret
-      Properties: 
+      Properties:
         Name: lambda/${opt:stage, "local"}/${self:service}
-        SecretString: 
-          "{}"
+        SecretString: '${file(serverless.config.js):appSecrets}'
 {% if persistence == 'dynamodb' %}
     Table:
       Type: AWS::DynamoDB::Table
@@ -112,7 +111,7 @@ custom:
   serverless-offline:
     useChildProcesses: false
     noPrependStageInUrl: true
-    prefix: ${file(serverless.config.js):serviceSlug}
+    prefix: ${file(serverless.config.js):service-slug}
 
   bundle:
     packager: yarn

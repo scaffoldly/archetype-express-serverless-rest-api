@@ -81,8 +81,8 @@ export class {{ Entity }}ControllerV1 extends Controller {
   @Security('jwt'){% endif %}
   public deleteById(
     @Path('{{ entityId }}') {{ entityId }}: string,
-    @Query('async') async = false,
     @Request() httpRequest: HttpRequestWithUser,
+    @Query('async') async = false,
   ): Promise<{{ EntityResponse }} | null> {
     return this.{{ entityService }}.deleteById({{ entityId }}, httpRequest.user, async);
   }
