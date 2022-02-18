@@ -35,9 +35,9 @@ export class DynamoDBEventController extends Controller {
     // eslint-disable-next-line prefer-const
     handled = await handleDynamoDBStreamRecord(record, {
       canHandle: {{entity | pascal_case }}Model.is{{ entity | pascal_case }},
-      onInsert: this.{{ entity }}Service.handleAdd,
-      onModify: this.{{ entity }}Service.handleModify,
-      onRemove: this.{{ entity }}Service.handleRemove,
+      onInsert: this.{{ entity }}Service.handleAdd.bind(this.{{ entity }}Service),
+      onModify: this.{{ entity }}Service.handleModify.bind(this.{{ entity }}Service),
+      onRemove: this.{{ entity }}Service.handleRemove.bind(this.{{ entity }}Service),
     });
     if (handled) {
       return handled;

@@ -9,8 +9,8 @@ disabledDeprecations:
 plugins:
   - serverless-bundle
   - serverless-dotenv-plugin
-  - serverless-dynamodb-local{% if ddb_stream_events %}
-  - serverless-offline-dynamodb-streams{% endif %}
+  - serverless-dynamodb-local
+  # - serverless-offline-dynamodb-streams
   - serverless-plugin-resource-tagging
   - serverless-offline
 
@@ -55,13 +55,16 @@ functions:
       - http:
           path: /{proxy+}
           method: options
-{% if persistence == 'dynamodb' and ddb_stream_events %}
+{% if persistence == 'dynamodb' %}
       - stream:
           type: dynamodb
           batchSize: 1
           maximumRecordAgeInSeconds: 600
           arn:
             Fn::GetAtt: [Table, StreamArn]
+{% endif %}{% if addon_sns %}
+      - sns:
+          arn: ${file(serverless.config.js):topic-arn}
 {% endif %}
 
 resources:

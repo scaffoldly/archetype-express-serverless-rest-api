@@ -1,4 +1,3 @@
-
 ---
 script:
   - rules:
@@ -7,13 +6,13 @@ script:
 
   - set:
       repository-name:
-        prompt: "Repository Name?"
+        prompt: 'Repository Name?'
       auth:
-        prompt: "Auth Dependency?"
+        prompt: 'Auth Dependency?'
         type: bool
         default: false
       persistence:
-        prompt: "Persistence Type?"
+        prompt: 'Persistence Type?'
         type:
           enum:
             - none
@@ -36,27 +35,41 @@ script:
             auth:
               value: true
             persistence:
-              value: "dynamodb"
+              value: 'dynamodb'
             db_stream_events:
+              value: false
+            addon_sns:
               value: false
         - render:
             directory:
-              source: "addons/email/base"
+              source: 'addons/email/base'
         - render:
             directory:
-              source: "addons/email/aws-ses"
+              source: 'addons/email/aws-ses'
         - render:
             directory:
-              source: "addons/encryption/base"
+              source: 'addons/encryption/base'
         - render:
             directory:
-              source: "addons/encryption/aws-kms"
+              source: 'addons/encryption/aws-kms'
         - render:
             directory:
-              source: "addons/totp/base"
+              source: 'addons/totp/base'
         - render:
             directory:
-              source: "addons/auth/base"
+              source: 'addons/auth/base'
+
+  - if:
+      conditions:
+        - switch-enabled: overwrite
+        - switch-enabled: addon-sns
+      then:
+        - set:
+            addon_sns:
+              value: true
+        - render:
+            directory:
+              source: 'addons/events/immutable/sns'
 
   - if:
       conditions:
@@ -64,7 +77,7 @@ script:
       then:
         - render:
             directory:
-              source: "github"
+              source: 'github'
 
   - if:
       conditions:
@@ -75,13 +88,13 @@ script:
               value: "{{ repository-name | trim_end_matches(pat='-sls-rest-api') }}"
         - render:
             directory:
-              source: "serverless"
+              source: 'serverless'
 
   - exec:
       command: chmod
       args:
-        - "ugo+x"
-        - "scripts/prepare.sh"
+        - 'ugo+x'
+        - 'scripts/prepare.sh'
 
   - if:
       conditions:
@@ -92,7 +105,7 @@ script:
                 overwrite: false
         - render:
             directory:
-              source: "immutable/serverless"
+              source: 'immutable/serverless'
 
   - if:
       conditions:
@@ -104,49 +117,48 @@ script:
             db_stream_events:
               value: true
             entities:
-              prompt: "Entities?"
-              default: ""
+              prompt: 'Entities?'
+              default: ''
               type: list
         - for:
             item:
               in: entities
             do:
               - scope:
-                - set:
-                    Entity:
-                      value: "{{ item | pascal_case }}"
-                    entity:
-                      value: "{{ item | lower_case }}"
-                    entityId:
-                      value: "{{ entity }}Id"
-                    entityRequest:
-                      value: "{{ entity }}Request"
-                    EntityRequest:
-                      value: "{{ Entity }}Request"
-                    EntityResponse:
-                      value: "{{ Entity }}Response"
-                    EntityListResponse:
-                      value: "{{ Entity }}ListResponse"
-                    EntityService:
-                      value: "{{ Entity }}Service"
-                    entityService:
-                      value: "{{ entity }}Service"
-                    EntityControllerV1:
-                      value: "{{ Entity }}ControllerV1"
-                    entityModel:
-                      value: "{{ entity }}Model"
-                    EntityModel:
-                      value: "{{ Entity }}Model"
-                    isEntity:
-                      value: "is{{ Entity }}"
-                - info: "Rendering {{ item }} entity for DynamoDB"
-                - render:
-                    directory:
-                      source: "immutable/dynamodb"
+                  - set:
+                      Entity:
+                        value: '{{ item | pascal_case }}'
+                      entity:
+                        value: '{{ item | lower_case }}'
+                      entityId:
+                        value: '{{ entity }}Id'
+                      entityRequest:
+                        value: '{{ entity }}Request'
+                      EntityRequest:
+                        value: '{{ Entity }}Request'
+                      EntityResponse:
+                        value: '{{ Entity }}Response'
+                      EntityListResponse:
+                        value: '{{ Entity }}ListResponse'
+                      EntityService:
+                        value: '{{ Entity }}Service'
+                      entityService:
+                        value: '{{ entity }}Service'
+                      EntityControllerV1:
+                        value: '{{ Entity }}ControllerV1'
+                      entityModel:
+                        value: '{{ entity }}Model'
+                      EntityModel:
+                        value: '{{ Entity }}Model'
+                      isEntity:
+                        value: 'is{{ Entity }}'
+                  - info: 'Rendering {{ item }} entity for DynamoDB'
+                  - render:
+                      directory:
+                        source: 'immutable/dynamodb'
         - render:
             directory:
-              source: "addons/events/immutable/dynamodb"
-
+              source: 'addons/events/immutable/dynamodb'
 
   - if:
       conditions:
@@ -157,19 +169,18 @@ script:
         - exec:
             command: yarn
             args:
-              - "add"
-              - "--ignore-scripts"
-              - "lodash@4.17.21"
-              - "node-2fa@2.0.2"
-              - "@types/notp@2.0.1"
-              - "@types/cookies@0.7.7"
-              - "cookies@0.8.0"
-              - "jose@2.0.5"
+              - 'add'
+              - '--ignore-scripts'
+              - 'lodash@4.17.21'
+              - 'node-2fa@2.0.2'
+              - '@types/notp@2.0.1'
+              - '@types/cookies@0.7.7'
+              - 'cookies@0.8.0'
+              - 'jose@2.0.5'
 
   - exec:
       command: npx
       args:
-        - "prettier"
-        - "--write"
+        - 'prettier'
+        - '--write'
         - '*/**/*.{js,ts,tsx}'
-

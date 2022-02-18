@@ -8,5 +8,6 @@
   "service-name": "{{ repository-name }}",
   "service-slug": "{{ service-name }}",
   "application-name": "{{ service-name }}",
-  "organization-name": "{{ service-name }}"
+  "organization-name": "{{ service-name }}",
+  "topic-arn": "arn:aws:sns:us-east-1:000000000000:local-{{ service-name }}-sls-rest-api"
 }
