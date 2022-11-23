@@ -16,7 +16,7 @@ plugins:
 
 provider:
   name: aws
-  runtime: nodejs14.x
+  runtime: nodejs16.x
   lambdaHashingVersion: '20201221'
   cfnRole: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/${self:service}-cloudformation
   stage: ${opt:stage, "local"}
@@ -119,6 +119,7 @@ custom:
   bundle:
     packager: yarn
     externals:
+      - aws-xray-sdk-core
       - tsoa
     copyFiles:
       - from: 'public/*'
