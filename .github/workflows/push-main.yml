@@ -12,27 +12,27 @@ jobs:
       fail-fast: true
       matrix:
         archetect-options:
-          - "-s github -s serverless -a repository-name=test-sls-rest-api"
-          - "-s github -s serverless -a repository-name=test-sls-rest-api -a persistence=dynamodb"
-          - "-s github -s serverless -s entity -a repository-name=test-sls-rest-api -a persistence=dynamodb -a entities=foo"
-          - "-s github -s serverless -s entity -a repository-name=test-sls-rest-api -a persistence=dynamodb -a entities=foo -a auth=true"
-          - "-s github -s serverless -s entity -a repository-name=test-sls-rest-api -a persistence=dynamodb -a entities=foo,bar"
-          - "-s github -s serverless -s entity -a repository-name=test-sls-rest-api -a persistence=dynamodb -a entities=foo,bar -a auth=true"
-          - "-s github -s serverless -s addon-auth -s addon-totp -s addon-aws-ses -a repository-name=auth-sls-rest-api"
-          - "-s github -s serverless -s entity -a repository-name=test-sls-rest-api -a persistence=dynamodb -a entities=foo,bar -a auth=true -s addon-sns"
+          - '-s github -s serverless -a repository-name=test-sls-rest-api'
+          - '-s github -s serverless -a repository-name=test-sls-rest-api -a persistence=dynamodb'
+          - '-s github -s serverless -s entity -a repository-name=test-sls-rest-api -a persistence=dynamodb -a entities=foo'
+          - '-s github -s serverless -s entity -a repository-name=test-sls-rest-api -a persistence=dynamodb -a entities=foo -a auth=true'
+          - '-s github -s serverless -s entity -a repository-name=test-sls-rest-api -a persistence=dynamodb -a entities=foo,bar'
+          - '-s github -s serverless -s entity -a repository-name=test-sls-rest-api -a persistence=dynamodb -a entities=foo,bar -a auth=true'
+          - '-s github -s serverless -s addon-auth -s addon-totp -s addon-aws-ses -a repository-name=auth-sls-rest-api'
+          - '-s github -s serverless -s entity -a repository-name=test-sls-rest-api -a persistence=dynamodb -a entities=foo,bar -a auth=true -s addon-sns'
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2-beta
         with:
-          node-version: '14'
+          node-version: '16'
       - uses: scaffoldly/archetect-render-action@v1
         with:
-          source: "."
-          destination: "${{ runner.temp }}/rendered"
-          options: "-s overwrite ${{ matrix.archetect-options }}"
-          commit: "false"
+          source: '.'
+          destination: '${{ runner.temp }}/rendered'
+          options: '-s overwrite ${{ matrix.archetect-options }}'
+          commit: 'false'
       - run: yarn
-        working-directory: "${{ runner.temp }}/rendered"
+        working-directory: '${{ runner.temp }}/rendered'
   prerelease:
     needs: render
     runs-on: ubuntu-latest
