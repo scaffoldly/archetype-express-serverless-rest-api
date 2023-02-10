@@ -1,6 +1,6 @@
 service: ${file(serverless.config.js):service-name}
 
-frameworkVersion: 2.57.0
+frameworkVersion: 3.27.0
 variablesResolutionMode: '20210326'
 configValidationMode: off
 disabledDeprecations:
@@ -16,7 +16,8 @@ plugins:
 
 provider:
   name: aws
-  runtime: nodejs16.x
+  runtime: nodejs18.x
+  deploymentMethod: direct
   lambdaHashingVersion: '20201221'
   cfnRole: arn:${env:AWS_PARTITION, ""}:iam::${env:AWS_ACCOUNT_ID, ""}:role/${self:service}-cloudformation
   stage: ${opt:stage, "local"}
