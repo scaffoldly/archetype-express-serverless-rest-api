@@ -6,6 +6,9 @@ on:
     types: 
       - published
 
+permissions:
+  contents: write
+
 env:
   GITHUB_TOKEN: {{ '${{ secrets.GITHUB_TOKEN }}' }}
   AWS_PARTITION: {{ '${{ secrets.LIVE_AWS_PARTITION }}' }}
